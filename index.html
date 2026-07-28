@@ -1,1975 +1,591 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salesforce Automation Training — Spoon Consulting</title>
-<style>
-:root {
-  --bg: #0c1828;
-  --surface: #112236;
-  --surface2: #182d4a;
-  --border: #1e3a5f;
-  --accent: #E8B84B;
-  --accent2: #7b6ddb;
-  --accent3: #6dd4dc;
-  --danger: #c44570;
-  --text: #eef2f8;
-  --text-muted: #7a8ba8;
-  --code-bg: #070f1c;
-  --keyword: #e06c9a;
-  --string: #6dd4a0;
-  --number: #E8B84B;
-  --comment: #4a6a8a;
-  --func: #61afef;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ─── SIDEBAR ─── */
-#sidebar {
-  width: 260px;
-  min-width: 260px;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
-  z-index: 100;
-  transition: all .3s ease;
-  overflow-y: auto;
-}
-
-#sidebar.collapsed {
-  width: 48px;
-  min-width: 48px;
-}
-#sidebar.collapsed .sidebar-logo,
-#sidebar.collapsed .sidebar-label,
-#sidebar.collapsed .nav-list,
-#sidebar.collapsed .sidebar-progress { display: none; }
-
-.sidebar-logo {
-  padding: 20px 16px 8px;
-}
-.sidebar-logo img {
-  width: 100%;
-  max-width: 220px;
-  height: auto;
-}
-
-.sidebar-label {
-  padding: 0 20px 16px;
-  font-size: .75em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
-.nav-list {
-  flex: 1;
-  padding: 0 8px;
-  overflow-y: auto;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  margin: 2px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: .82em;
-  color: var(--text-muted);
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  transition: all .2s;
-}
-.nav-item:hover { background: var(--surface2); color: var(--text); }
-.nav-item.active { background: var(--surface2); color: var(--accent); }
-.nav-item.visited .nav-badge { background: var(--accent3); color: var(--bg); }
-
-.nav-badge {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: var(--surface2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: .72em;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.nav-subs {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .3s ease;
-  padding-left: 34px;
-}
-.nav-group.expanded .nav-subs { max-height: 600px; }
-.nav-sub {
-  display: block;
-  padding: 5px 10px;
-  font-size: .72em;
-  color: var(--text-muted);
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: all .2s;
-  border-radius: 0 4px 4px 0;
-}
-.nav-sub:hover { color: var(--text); background: rgba(255,255,255,.03); }
-.nav-sub.active-sub { color: var(--accent); border-left-color: var(--accent); }
-
-.sidebar-progress {
-  padding: 16px 20px;
-  border-top: 1px solid var(--border);
-}
-.progress-label {
-  font-size: .72em;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-.progress-bar-bg {
-  height: 6px;
-  background: var(--surface2);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent3));
-  border-radius: 3px;
-  width: 0%;
-  transition: width .4s ease;
-}
-
-.sidebar-footer {
-  padding: 8px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 4px;
-}
-.sidebar-footer button {
-  flex: 1;
-  padding: 8px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: .8em;
-  transition: all .2s;
-}
-.sidebar-footer button:hover { background: var(--border); color: var(--text); }
-
-/* ─── MAIN ─── */
-#main {
-  margin-left: 260px;
-  flex: 1;
-  transition: margin-left .3s ease;
-}
-#sidebar.collapsed ~ #main { margin-left: 48px; }
-
-.section {
-  min-height: 100vh;
-  padding: 48px 56px;
-  border-bottom: 1px solid var(--border);
-}
-
-/* ─── MODULE HEADER ─── */
-.module-header {
-  margin-bottom: 40px;
-}
-.module-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px; height: 52px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
-  color: var(--bg);
-  font-size: 1.5em;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-.module-title {
-  font-size: 2.2em;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-.module-subtitle {
-  font-size: 1em;
-  color: var(--text-muted);
-}
-
-/* ─── CARDS ─── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px 32px;
-  margin-bottom: 24px;
-  transition: all .2s;
-}
-.card:hover { border-color: var(--accent); }
-.card h3 {
-  font-size: 1.15em;
-  margin-bottom: 14px;
-  color: var(--accent);
-}
-.card h4 {
-  font-size: .95em;
-  margin: 18px 0 8px;
-  color: var(--accent3);
-}
-.card p {
-  line-height: 1.7;
-  color: var(--text);
-  margin-bottom: 10px;
-}
-.card ul, .card ol {
-  padding-left: 0;
-  list-style: none;
-  margin: 8px 0;
-}
-.card ul li, .card ol li {
-  position: relative;
-  padding-left: 20px;
-  margin-bottom: 8px;
-  line-height: 1.65;
-}
-.card ul li::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 10px;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-/* ─── CODE BLOCKS ─── */
-.code-block {
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin: 16px 0;
-  overflow: hidden;
-}
-.code-block-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  background: rgba(255,255,255,.03);
-  border-bottom: 1px solid var(--border);
-  font-size: .75em;
-  color: var(--text-muted);
-}
-.code-block-header .copy-btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  padding: 3px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: .9em;
-  transition: all .2s;
-}
-.code-block-header .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-.code-block pre {
-  padding: 16px 20px;
-  overflow-x: auto;
-  font-family: 'Fira Code', 'Cascadia Code', monospace;
-  font-size: .85em;
-  line-height: 1.6;
-  color: var(--text);
-  white-space: pre;
-}
-
-.kw { color: var(--keyword); }
-.str { color: var(--string); }
-.num { color: var(--number); }
-.cmt { color: var(--comment); font-style: italic; }
-.fn { color: var(--func); }
-.bool { color: var(--accent); }
-.prop { color: var(--accent3); }
-.op { color: var(--keyword); }
-.punc { color: var(--text-muted); }
-
-/* ─── COMPARE GRID ─── */
-.compare-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 16px 0;
-}
-.compare-col {
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
-.compare-col-header {
-  padding: 8px 16px;
-  font-size: .8em;
-  font-weight: 600;
-  background: rgba(255,255,255,.03);
-  border-bottom: 1px solid var(--border);
-}
-.compare-col-header.before { color: var(--danger); }
-.compare-col-header.after { color: var(--accent3); }
-.compare-col pre {
-  padding: 14px 16px;
-  font-family: 'Fira Code', 'Cascadia Code', monospace;
-  font-size: .82em;
-  line-height: 1.6;
-  overflow-x: auto;
-  white-space: pre;
-}
-
-/* ─── TRY-IT BUTTON ─── */
-.try-it-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, var(--accent), #d4a03a);
-  color: var(--bg);
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: .88em;
-  margin-top: 12px;
-  transition: all .2s;
-}
-.try-it-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,184,75,.3); }
-
-/* ─── FLOATING PLAYGROUND ─── */
-#playground-panel {
-  display: none;
-  position: fixed;
-  width: 560px;
-  height: 440px;
-  min-width: 360px;
-  min-height: 280px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 8px 40px rgba(0,0,0,.5);
-  z-index: 500;
-  flex-direction: column;
-  overflow: hidden;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-}
-#playground-panel.visible { display: flex; }
-
-.pg-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background: var(--surface2);
-  cursor: move;
-  user-select: none;
-}
-.pg-header-title { font-weight: 700; font-size: .88em; color: var(--accent); }
-.pg-header-actions { display: flex; gap: 4px; }
-.pg-header-actions button {
-  background: none; border: 1px solid var(--border);
-  color: var(--text-muted); padding: 4px 10px; border-radius: 4px;
-  cursor: pointer; font-size: .78em; transition: all .2s;
-}
-.pg-header-actions button:hover { border-color: var(--accent); color: var(--accent); }
-
-.pg-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.pg-body textarea {
-  flex: 1;
-  background: var(--code-bg);
-  color: var(--text);
-  border: none;
-  padding: 14px 16px;
-  font-family: 'Fira Code', 'Cascadia Code', monospace;
-  font-size: .82em;
-  line-height: 1.6;
-  resize: none;
-  outline: none;
-}
-.pg-output {
-  height: 100px;
-  background: #060d18;
-  border-top: 1px solid var(--border);
-  padding: 10px 16px;
-  font-family: 'Fira Code', 'Cascadia Code', monospace;
-  font-size: .8em;
-  color: var(--accent3);
-  overflow-y: auto;
-  white-space: pre-wrap;
-}
-
-.pg-footer {
-  display: flex;
-  gap: 6px;
-  padding: 8px 12px;
-  background: var(--surface2);
-}
-.pg-footer button {
-  padding: 6px 16px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: .8em;
-  font-weight: 600;
-  transition: all .2s;
-}
-.pg-footer button:hover { border-color: var(--accent); color: var(--accent); }
-.pg-footer .run-btn { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-.pg-footer .run-btn:hover { background: #d4a03a; }
-
-.pg-resize {
-  position: absolute;
-  bottom: 0; right: 0;
-  width: 18px; height: 18px;
-  cursor: nwse-resize;
-}
-
-/* ─── WELCOME ─── */
-.welcome-title {
-  font-size: 3em;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 8px;
-}
-.welcome-subtitle {
-  font-size: 1.3em;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-.welcome-credit {
-  font-size: .95em;
-  color: var(--text-muted);
-  margin-bottom: 32px;
-}
-
-.module-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 32px;
-}
-.module-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all .2s;
-}
-.module-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.3); }
-.module-card .mc-num {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: var(--surface2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: .8em; font-weight: 700; color: var(--accent);
-  margin-bottom: 10px;
-}
-.module-card .mc-title { font-weight: 700; margin-bottom: 4px; font-size: .95em; }
-.module-card .mc-desc { font-size: .78em; color: var(--text-muted); line-height: 1.5; }
-
-/* ─── THANK YOU ─── */
-.ty-title {
-  font-size: 3em;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 8px;
-  text-align: center;
-}
-.ty-sub {
-  text-align: center;
-  color: var(--text-muted);
-  margin-bottom: 40px;
-}
-.ty-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  max-width: 640px;
-  margin: 0 auto;
-}
-.ty-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  text-align: center;
-  text-decoration: none;
-  color: var(--text);
-  transition: all .2s;
-}
-.ty-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.ty-card-photo-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
-.ty-card-avatar {
-  width: 130px; height: 130px; border-radius: 50%;
-  overflow: hidden; border: 3px solid var(--border);
-  box-shadow: 0 4px 20px rgba(0,0,0,.4);
-  transition: border-color .22s;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--surface2);
-}
-.ty-card:hover .ty-card-avatar { border-color: var(--accent); }
-.ty-card-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
-.ty-card-name { font-size: 1.1em; font-weight: 700; margin-bottom: 4px; }
-.ty-card-role { font-size: .82em; color: var(--text-muted); margin-bottom: 8px; }
-.ty-card-email { font-size: .82em; color: var(--accent3); }
-
-/* ─── TABLE ─── */
-.info-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 16px 0;
-  font-size: .88em;
-}
-.info-table th, .info-table td {
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  text-align: left;
-}
-.info-table th {
-  background: var(--surface2);
-  color: var(--accent);
-  font-weight: 600;
-}
-.info-table td { background: var(--surface); }
-
-/* ─── MISC ─── */
-a { color: var(--accent3); }
-.tag {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 4px;
-  background: var(--surface2);
-  color: var(--accent);
-  font-size: .78em;
-  font-weight: 600;
-  margin: 2px;
-}
-.note {
-  background: rgba(232,184,75,.08);
-  border-left: 3px solid var(--accent);
-  padding: 12px 16px;
-  border-radius: 0 8px 8px 0;
-  margin: 12px 0;
-  font-size: .9em;
-  color: var(--text-muted);
-}
-
-/* ─── ANIMATION CONTAINERS ─── */
-.anim-container {
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  margin: 16px 0;
-}
-.anim-controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-.anim-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: .82em;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-.anim-toggle input { accent-color: var(--accent); }
-.anim-btn {
-  padding: 6px 16px;
-  background: var(--accent);
-  color: var(--bg);
-  border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: .82em;
-  transition: all .2s;
-}
-.anim-btn:hover { background: #d4a03a; }
-.anim-log {
-  margin-top: 12px;
-  padding: 8px 12px;
-  background: rgba(0,0,0,.3);
-  border-radius: 6px;
-  font-family: 'Fira Code', monospace;
-  font-size: .78em;
-  color: var(--text-muted);
-  min-height: 24px;
-  white-space: pre-wrap;
-}
-
-/* ─── VALIDATION EXECUTION ANIMATION ─── */
-.anim-tree {
-  display: flex;
-  justify-content: center;
-}
-.anim-node {
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 8px;
-  transition: all .4s ease;
-  position: relative;
-}
-.anim-node.glow {
-  border-color: var(--accent3);
-  box-shadow: 0 0 20px rgba(109,212,220,.3);
-}
-.anim-node.glow-stop {
-  border-color: var(--danger);
-  box-shadow: 0 0 20px rgba(196,69,112,.3);
-}
-.anim-node-inner {
-  background: var(--surface);
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: .82em;
-  font-family: 'Fira Code', monospace;
-  color: var(--accent3);
-  margin-bottom: 6px;
-  text-align: center;
-}
-.anim-leaf .anim-node-inner {
-  background: var(--accent);
-  color: var(--bg);
-  cursor: pointer;
-}
-.anim-shadow-boundary {
-  border: 1px dashed var(--text-muted);
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 4px;
-  position: relative;
-}
-.anim-sb-label {
-  position: absolute;
-  top: -8px;
-  left: 10px;
-  background: var(--code-bg);
-  padding: 0 6px;
-  font-size: .65em;
-  color: var(--text-muted);
-}
-
-/* ─── RECORD TRIGGERED SCENE ANIMATION ─── */
-.compose-scene { display: flex; justify-content: center; }
-.compose-parent {
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  min-width: 500px;
-  transition: border-color .3s;
-}
-.compose-label {
-  font-family: 'Fira Code', monospace;
-  font-size: .82em;
-  color: var(--accent3);
-  margin-bottom: 10px;
-}
-.compose-tag {
-  background: var(--accent);
-  color: var(--bg);
-  padding: 1px 8px;
-  border-radius: 4px;
-  font-size: .8em;
-  font-weight: 600;
-}
-.compose-children {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.compose-child {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  position: relative;
-  transition: all .3s;
-}
-.compose-items { display: flex; flex-direction: column; gap: 4px; }
-.compose-item {
-  padding: 8px 12px;
-  background: var(--surface);
-  border-radius: 6px;
-  font-size: .85em;
-  cursor: pointer;
-  transition: all .2s;
-  border: 1px solid transparent;
-}
-.compose-item:hover { border-color: var(--accent); }
-.compose-item.selected {
-  border-color: var(--accent);
-  background: rgba(232,184,75,.1);
-}
-.compose-arrow-up, .compose-arrow-down {
-  text-align: center;
-  font-size: .72em;
-  color: var(--text-muted);
-  padding: 6px 0 0;
-  opacity: 0;
-  transition: opacity .3s;
-}
-.compose-arrow-up.show, .compose-arrow-down.show {
-  opacity: 1;
-}
-.compose-arrow-up span { color: var(--danger); }
-.compose-arrow-down span { color: var(--accent3); }
-.compose-detail-content {
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.compose-detail-placeholder {
-  color: var(--text-muted);
-  font-size: .85em;
-  font-style: italic;
-}
-.compose-detail-info {
-  width: 100%;
-}
-.compose-detail-info .cdi-name {
-  font-size: 1.1em;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 4px;
-}
-.compose-detail-info .cdi-email {
-  font-size: .82em;
-  color: var(--text-muted);
-}
-.compose-detail-info .cdi-phone {
-  font-size: .82em;
-  color: var(--text-muted);
-}
-
-@keyframes pulse-glow {
-  0%,100% { box-shadow: 0 0 8px rgba(232,184,75,.2); }
-  50% { box-shadow: 0 0 24px rgba(232,184,75,.5); }
-}
-.compose-child.flash { animation: pulse-glow .6s ease; }
-
-@media (max-width: 900px) {
-  #sidebar { display: none; }
-  #main { margin-left: 0 !important; }
-  .section { padding: 24px 20px; }
-  .compare-grid { grid-template-columns: 1fr; }
-  .ty-grid { grid-template-columns: 1fr; }
-}
-</style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Salesforce Process Automation — Interactive Guide · Spoon Consulting</title>
+<meta name="description" content="Learn Salesforce Process Automation from zero: formulas, validation rules, and every type of Flow, with interactive diagrams, comparisons, and knowledge checks."/>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<!-- ═══ SIDEBAR ═══ -->
-<nav id="sidebar">
-  <div class="sidebar-logo"><img src="data:image/png;base64,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" alt="Spoon Consulting"/></div>
-  <div class="sidebar-label">Automation Training</div>
-  <div class="nav-list" id="navList"></div>
-  <div class="sidebar-progress">
-    <div class="progress-label" id="progressLabel">0 of 12 completed</div>
-    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+<!-- ===================== TOP BAR ===================== -->
+<header class="topbar">
+  <button class="iconbtn menu-toggle" id="menuToggle" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="#overview">
+    <span class="mark">
+      <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><text x="4.5" y="16" font-family="system-ui" font-size="10" font-weight="800" fill="#0c2a35">sp</text><circle cx="15.5" cy="9.5" r="2" fill="#ef7a52"/><text x="13" y="16" font-family="system-ui" font-size="10" font-weight="800" fill="#0c2a35">n</text></svg>
+    </span>
+    <span><b>Process Automation</b><small>Spoon Consulting · Bootcamp</small></span>
+  </a>
+  <div class="search">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="filterInput" type="text" placeholder="Filter topics…" aria-label="Filter topics"/>
+    <kbd>/</kbd>
   </div>
-  <div class="sidebar-footer">
-    <button onclick="toggleSidebar()" title="Toggle sidebar" id="collapseBtn">&#9776;</button>
-    <button onclick="toggleAppFullscreen()" title="Fullscreen" id="fsBtn">&#x26F6;</button>
-  </div>
-</nav>
+  <button class="iconbtn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+    <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  </button>
+</header>
 
-<!-- ═══ MAIN CONTENT ═══ -->
-<div id="main">
+<div class="backdrop" id="backdrop"></div>
 
-<!-- ─── S-0: WELCOME ─── -->
-<section class="section" id="s-0">
-  <div class="welcome-title">Salesforce Automation</div>
-  <div class="welcome-subtitle">Declarative &amp; Programmatic Logic Course</div>
-  <div class="welcome-credit">Presented by Spoon Consulting</div>
+<div class="shell">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <!-- <div class="nav-progress">
+      <div class="pl"><span>Your progress</span><span id="navPct">0%</span></div>
+      <div class="track"><div class="fill" id="navFill"></div></div>
+    </div> -->
+    <nav class="nav" id="nav"><!-- injected by script.js --></nav>
+  </aside>
 
-  <div class="card" id="card-0-1">
-    <h3>Course Overview</h3>
-    <p>This hands-on course turns you from a beginner into an expert on Salesforce's core automation tools[cite: 4]. You will learn how to write declarative Validation Rules to prevent bad data[cite: 4], design visual Screen Flows to guide users[cite: 4], build high-powered Record-Triggered Flows to handle background operations[cite: 4], leverage modular Autolaunched Flows[cite: 4], and manage recurring operations with Scheduled Flows[cite: 4].</p>
-  </div>
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+    <div class="page">
+      <div class="content">
 
-  <div class="module-grid" id="moduleGrid"></div>
-</section>
+        <!-- ========================= HERO ========================= -->
+        <section id="overview" class="section hero" data-nav="Overview" data-group="Get started">
+          <div class="eyebrow"><span class="n">Salesforce Track</span> Newbies Bootcamp · 2026</div>
+          <h1>Automate Salesforce, <span class="grad">without writing code.</span></h1>
+          <p class="lede">A complete, hands-on guide to <b>Process Automation</b> — from the formulas and validation rules that protect your data, to every type of <b>Flow</b>. Written for people who have never opened Salesforce.</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="#foundations">Start from zero →</a>
+            <a class="btn ghost" href="#choosing">Jump to "which automation?"</a>
+          </div>
 
-<!-- ─── S-1: INTRODUCTION ─── -->
-<section class="section" id="s-1">
-  <div class="module-header">
-    <div class="module-number">1</div>
-    <div class="module-title">Introduction</div>
-    <div class="module-subtitle">Agenda, Concepts, and the Automation Spectrum</div>
-  </div>
-
-  <div class="card" id="card-1-1">
-    <h3>Training Agenda</h3>
-    <ul>
-      <li>Validation Rules (Syntax and Execution Context)</li>
-      <li>Screen Flows (User-interactive flows)</li>
-      <li>Record-Triggered Flows (Before vs. After-Save)</li>
-      <li>Scheduled Paths &amp; Asynchronous Path Patterns</li>
-      <li>Autolaunched Flows &amp; Subflow Architecture</li>
-      <li>Scheduled Flows (Recurrence and Mass Processing)</li>
-      <li>Error Handling &amp; Debugging Automations</li>
-      <li>Best Practices &amp; Common Architecture Mistakes</li>
-    </ul>
-  </div>
-
-  <div class="card" id="card-1-2">
-    <h3>Salesforce Automation Spectrum</h3>
-    <p>Choose the correct tool for the business requirement to keep your org responsive and clean.</p>
-
-    <div class="compare-grid">
-      <div class="compare-col">
-        <div class="compare-col-header before">Declarative Automation</div>
-        <pre>Validation Rules (Data Integrity)
-Screen Flows (User Guidance)
-Record-Triggered Flows (Background)
-Scheduled Flows (Batch Jobs)
-Autolaunched Flows (Reusable blocks)</pre>
-      </div>
-      <div class="compare-col">
-        <div class="compare-col-header after">Programmatic Extensibility</div>
-        <pre>Apex Triggers (Complex operations)
-Apex Invocable Methods (Called by Flow)
-Batch Apex / Queueable Apex
-Custom LWC components within Screen Flows
-Platform Events integration</pre>
-      </div>
-    </div>
-    <div class="note">Key takeaway: Always start with Flows first. Bring in Apex only for heavy bulk volumes, advanced calculations, or deep custom system integrations.</div>
-  </div>
-
-  <div class="card" id="card-1-3">
-    <h3>Architecture Overview</h3>
-    <ul>
-      <li><strong>Validation Rules:</strong> Prevent record save operations at the database layer if conditions are met[cite: 4].</li>
-      <li><strong>Screen Flows:</strong> Display step-by-step forms with data tables and dynamic picklists[cite: 4].</li>
-      <li><strong>Record-Triggered Flows:</strong> Execute instantly when records are created, updated, or deleted[cite: 4].</li>
-      <li><strong>Autolaunched Flows:</strong> Reusable processes built to be called by other flows or custom code[cite: 4].</li>
-      <li><strong>Scheduled Flows:</strong> Batch-style automation that scans the database and updates records at set times[cite: 4].</li>
-    </ul>
-  </div>
-</section>
-
-<!-- ─── S-2: VALIDATION RULES ─── -->
-<section class="section" id="s-2">
-  <div class="module-header">
-    <div class="module-number">2</div>
-    <div class="module-title">Validation Rules</div>
-    <div class="module-subtitle">Formula syntax, logical operators, and cross-object validation</div>
-  </div>
-
-  <div class="card" id="card-2-1">
-    <h3>Anatomy of a Validation Rule</h3>
-    <p>Validation Rules analyze criteria and stop a record from saving when the formula evaluates to **TRUE**[cite: 4].</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>Formula Structure</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>AND(
-  ISPICKVAL(Type, "Prospect"),
-  ISBLANK(AnnualRevenue)
-)</pre>
-    </div>
-    <div class="note">If this formula evaluates to TRUE, saving is blocked and your custom error message is displayed[cite: 4].</div>
-  </div>
-
-  <div class="card" id="card-2-2">
-    <h3>Common Validation Patterns</h3>
-    <ul>
-      <li><strong>ISBLANK() &amp; ISNULL():</strong> Use <code>ISBLANK()</code> for modern text and number fields[cite: 4].</li>
-      <li><strong>ISPICKVAL():</strong> Evaluates picklist field values since picklists cannot be read directly as text.</li>
-      <li><strong>REGEX():</strong> Validates specific formats (e.g., zip codes, phone formatting, secure URLs)[cite: 4].</li>
-      <li><strong>Parent Reference:</strong> Reference related data across lookup relationships (e.g., <code>Account.Industry</code>)[cite: 4].</li>
-    </ul>
-  </div>
-
-  <div class="card" id="card-2-3">
-    <h3>Syntax Examples</h3>
-    <p>Take a look at how logical constructs evaluate inside the database engine[cite: 4]:</p>
-
-    <div class="code-block">
-      <div class="code-block-header"><span>Contact &amp; Phone Requirement</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>AND(
-  ISBLANK(Phone),
-  ISBLANK(Email)
-)</pre>
-    </div>
-
-    <div class="code-block">
-      <div class="code-block-header"><span>Parent Object Check</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>AND(
-  ISBLANK(Account.Industry),
-  NOT(ISBLANK(Title))
-)</pre>
-    </div>
-    <button class="try-it-btn" onclick="openPlayground(this, `// Simulating Validation Rule logic\nconst Phone = '';\nconst Email = '';\n\n// Rule: AND(ISBLANK(Phone), ISBLANK(Email))\nconst isPhoneBlank = (Phone === '');\nconst isEmailBlank = (Email === '');\n\nif (isPhoneBlank &amp;&amp; isEmailBlank) {\n  console.log('❌ Error: Please enter at least a phone number or an email address.');\n} else {\n  console.log('✅ Validation Passed: Record saved.');\n}`)">&#9654; Try It</button>
-  </div>
-
-  <div class="card" id="card-2-4">
-    <h3>Secure URLs Requirement</h3>
-    <p>Ensure web links utilize SSL by evaluating prefixes with structural string logic[cite: 4].</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>URL Secure Check</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>AND(
-  NOT(ISBLANK(Website)),
-  NOT(BEGINS(Website, "https://"))
-)</pre>
-    </div>
-  </div>
-
-  <div class="card" id="card-2-5" style="border-color: var(--accent);">
-    <h3>Exercise 1: Lead Contact Requirements</h3>
-    <p>Create a Validation Rule on the <strong>Lead</strong> object ensuring leads have at least one way to contact them — either a Phone or an Email[cite: 4]. Display the error: <em>“Please enter at least a phone number or an email address.”</em>[cite: 4]</p>
-  </div>
-
-  <div class="card" id="card-2-6" style="border-color: var(--accent);">
-    <h3>Exercise 2: Cross-Object Rules</h3>
-    <p>Create a Validation Rule on the <strong>Contact</strong> object[cite: 4]. If the parent <code>Account.Industry</code> is blank and the Contact's <code>Title</code> is filled in, prevent saving[cite: 4]. Display the error under the Account Name field[cite: 4].</p>
-  </div>
-</section>
-
-<!-- ─── S-3: SCREEN FLOWS ─── -->
-<section class="section" id="s-3">
-  <div class="module-header">
-    <div class="module-number">3</div>
-    <div class="module-title">Screen Flows</div>
-    <div class="module-subtitle">User screens, custom inputs, Data Tables, and transactional updates</div>
-  </div>
-
-  <div class="card" id="card-3-1">
-    <h3>What is a Screen Flow?</h3>
-    <p>Screen Flows let you create guided wizard screens for users[cite: 4]. They capture input[cite: 4], make decisions, and create or update records behind the scenes[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-3-2">
-    <h3>Core Components</h3>
-
-    <h4>User Input Fields</h4>
-    <p>Gather data using native fields such as Text, Number, Date, Picklists, or Lookup components[cite: 4].</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>Input Capture Variables</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Screen Elements:
-  - FirstName (Text Input)
-  - LastName (Text Input)
-  - Email (Email Input)
-  - AccountLookup (Record Lookup)</pre>
-    </div>
-
-    <h4>The Data Table Component</h4>
-    <p>Present lists of records to users in a table[cite: 4]. Users can select one or many rows for batch processing[cite: 4].</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>Data Table Configuration</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Source Collection: {Get_Opportunities}
-Selected Rows Output: {myDataTable.selectedRows}
-Displayed Fields: Name, StageName, CloseDate, Amount</pre>
-    </div>
-    <button class="try-it-btn" onclick="openPlayground(this, `// Simulating record selection and batch update in flow\nconst selectedOpportunities = [\n  { Id: '001', Name: 'Acme Deal', StageName: 'Prospecting' },\n  { Id: '002', Name: 'Spoon Consulting Contract', StageName: 'Qualification' }\n];\nconst newStage = 'Proposal/Price Quote';\n\nconst updatedOpps = selectedOpportunities.map(opp => {\n  return { ...opp, StageName: newStage };\n});\n\nconsole.log('Resulting updates to write to database:');\nconsole.log(JSON.stringify(updatedOpps, null, 2));`)">&#9654; Try It</button>
-  </div>
-
-  <div class="card" id="card-3-3">
-    <h3>Data Storage Elements</h3>
-    <ul>
-      <li><strong>Create Records:</strong> Generates a new database record using the screen inputs[cite: 4].</li>
-      <li><strong>Update Records:</strong> Modifies existing records based on conditions or record variables[cite: 4].</li>
-      <li><strong>Get Records:</strong> Queries the database to fetch records based on filter criteria[cite: 4].</li>
-      <li><strong>Loop Element:</strong> Iterates over a collection of records to apply changes one by one[cite: 4].</li>
-    </ul>
-  </div>
-
-  <div class="card" id="card-3-4" style="border-color: var(--accent);">
-    <h3>Exercise 1: Contact Creation Wizard</h3>
-    <p>Create a Screen Flow that captures First Name, Last Name, Email, and an optional Account Name, then creates a Contact record in Salesforce when clicked[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-3-5" style="border-color: var(--accent);">
-    <h3>Exercise 2: Bulk Opportunity Stage Updater</h3>
-    <p>Create a Screen Flow where the user selects a new Stage Name from a picklist[cite: 4]. Display a Data Table of non-closed Opportunities[cite: 4]. The flow must then update the StageName of all selected opportunities[cite: 4].</p>
-  </div>
-</section>
-
-<!-- ─── S-4: RECORD-TRIGGERED FLOWS ─── -->
-<section class="section" id="s-4">
-  <div class="module-header">
-    <div class="module-number">4</div>
-    <div class="module-title">Record-Triggered Flows</div>
-    <div class="module-subtitle">Before-Save Fast Field Updates vs. After-Save Actions</div>
-  </div>
-
-  <div class="card" id="card-4-1">
-    <h3>Understanding Triggering Contexts</h3>
-    <p>Record-Triggered Flows run automatically in the background when records are created, updated, or deleted[cite: 4]. It is critical to select the right optimization path.</p>
-  </div>
-
-  <div class="card" id="card-4-2">
-    <h3>Before-Save vs. After-Save</h3>
-    <p>Save operations undergo structural phases in the Salesforce database lifecycle.</p>
-    <div class="compare-grid">
-      <div class="compare-col">
-        <div class="compare-col-header before">Fast Field Updates (Before-Save)</div>
-        <pre>Runs BEFORE the record is saved to the database.
-Used for updates to the triggering record itself.
-10x faster execution.
-No DML operations required.
-Cannot update related parent/child records.</pre>
-      </div>
-      <div class="compare-col">
-        <div class="compare-col-header after">Actions &amp; Related Records (After-Save)</div>
-        <pre>Runs AFTER the record is saved to the database.
-Used to update related records.
-Used to trigger email alerts, outbound messages.
-Required to execute Scheduled or Async Paths.
-Slower execution speed.</pre>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" id="card-4-3">
-    <h3>Trigger Configuration</h3>
-    <div class="code-block">
-      <div class="code-block-header"><span>Fast Field Update</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Object: Opportunity
-Trigger: A record is updated
-Condition Requirements: Any Condition Is Met
-Optimization: Fast Field Updates</pre>
-    </div>
-  </div>
-
-  <div class="card" id="card-4-4">
-    <h3>Parent-Child Updates</h3>
-    <p>When updating related parent records, use the **Actions and Related Records** option[cite: 4].</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>Update Parent Account</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Trigger: Case Status is updated to "Closed"
-Action: Update Related Records
-Target: $Record.AccountId
-Field: Last_Case_Closed_Date__c = $Record.ClosedDate</pre>
-    </div>
-  </div>
-
-  <div class="card" id="card-4-5" style="border-color: var(--accent);">
-    <h3>Exercise 1: Fast Field Modification</h3>
-    <p>Create a Record-Triggered Flow on the Opportunity object[cite: 4]. Every time an Opportunity is updated, its custom field <code>Last_Modified_By_Flow_Date__c</code> must be updated to the current date[cite: 4]. Optimize this for **Fast Field Updates**[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-4-6" style="border-color: var(--accent);">
-    <h3>Exercise 2: Cross-Object Update</h3>
-    <p>Create a Record-Triggered Flow on the **Case** object[cite: 4]. When a Case's Status is set to "Closed", update the related parent <code>Account.Last_Case_Closed_Date__c</code> to the Case's Closed Date[cite: 4].</p>
-  </div>
-</section>
-
-<!-- ─── S-5: SCHEDULED & ASYNC PATHS ─── -->
-<section class="section" id="s-5">
-  <div class="module-header">
-    <div class="module-number">5</div>
-    <div class="module-title">Scheduled &amp; Async Paths</div>
-    <div class="module-subtitle">Deferred actions, SLAs, and background processing patterns</div>
-  </div>
-
-  <div class="card" id="card-5-1">
-    <h3>Advanced Trigger Features</h3>
-    <p>Standard flows run synchronously, which can slow down page saves. Use Scheduled Paths to pause execution[cite: 4], or use Asynchronous Paths to run complex logic in the background[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-5-2">
-    <h3>Scheduled Paths</h3>
-    <p>Scheduled Paths let you delay actions based on a specific date or time field on the triggering record[cite: 4].</p>
-    <ul>
-      <li><strong>Time Source:</strong> Can be set relative to CreatedDate, LastModifiedDate, or any custom Date/Time field[cite: 4].</li>
-      <li><strong>Offset Options:</strong> Configure the path to run hours, days, or weeks before or after the date field[cite: 4].</li>
-      <li><strong>SLA Use Case:</strong> Send escalation reminders if a Case remains open after 48 hours.</li>
-    </ul>
-    <div class="code-block">
-      <div class="code-block-header"><span>SLA Configuration</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Scheduled Path: Escalate Case
-Time Source: $Record.CreatedDate
-Offset: 2 Days After
-Criteria: Status != "Closed"</pre>
-    </div>
-  </div>
-
-  <div class="card" id="card-5-3">
-    <h3>Asynchronous Paths</h3>
-    <p>Use the **Run Asynchronously** path to run resource-heavy logic in a separate background transaction[cite: 4]. This keeps the system fast and responsive for users during save operations.</p>
-    <ul>
-      <li><strong>Performance Benefits:</strong> Prevents "CPU limit exceeded" errors.</li>
-      <li><strong>External Callouts:</strong> Must use async paths when making HTTP callouts from Record-Triggered flows.</li>
-      <li><strong>Roll-up Calculations:</strong> Ideal for calculating the sum of multiple child record fields in the background[cite: 4].</li>
-    </ul>
-    <button class="try-it-btn" onclick="openPlayground(this, `// Simulating background asynchronous calculation\nconst items = [\n  { Name: 'Spoon LWC License', Quantity: 5 },\n  { Name: 'Automation License', Quantity: 10 }\n];\n\nconsole.log('Synchronous save completed! Running calculation in background...');\nsetTimeout(() => {\n  const totalQuantity = items.reduce((acc, item) => acc + item.Quantity, 0);\n  console.log('Asynchronous calculation finished.');\n  console.log('Total Quantity Calculated:', totalQuantity);\n}, 1000);`)">&#9654; Try It</button>
-  </div>
-
-  <div class="card" id="card-5-4" style="border-color: var(--accent);">
-    <h3>Exercise 1: Scheduled Case Review</h3>
-    <p>Create a Record-Triggered Flow on **Case**[cite: 4]. When Status is set to "Escalated", immediately set a custom checkbox <code>Reviewed__c</code> to FALSE[cite: 4]. Add a Scheduled Path that runs 3 days after the Case's Closed Date to set <code>Ready_For_Review__c</code> to TRUE[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-5-5" style="border-color: var(--accent);">
-    <h3>Exercise 2: Async Product Recalculation</h3>
-    <p>Create an After-Save Record-Triggered Flow on **Opportunity**[cite: 4]. When the Stage Name changes, run an **Asynchronous Path** that queries all related Opportunity Line Items, sums their Quantity, and updates a custom field on the parent Opportunity[cite: 4].</p>
-  </div>
-</section>
-
-<!-- ─── S-6: FLOW EXECUTION LIFE CYCLE ─── -->
-<section class="section" id="s-6">
-  <div class="module-header">
-    <div class="module-number">6</div>
-    <div class="module-title">Execution Lifecycle</div>
-    <div class="module-subtitle">Order of execution, validation evaluation, and flow transaction boundaries</div>
-  </div>
-
-  <div class="card" id="card-6-1">
-    <h3>The Order of Execution</h3>
-    <p>Salesforce follows a strict, step-by-step sequence when saving a record. Understanding this order is key to debugging complex automations.</p>
-
-    <!-- VALIDATION RULE ORDER VISUALIZATION -->
-    <div class="anim-container" id="bubble-anim">
-      <div class="anim-controls">
-        <label class="anim-toggle"><input type="checkbox" id="opt-bubbles" checked><span>Run System Validation</span></label>
-        <label class="anim-toggle"><input type="checkbox" id="opt-composed" checked><span>Run Record-Triggered Flows</span></label>
-        <button class="anim-btn" onclick="startBubbleAnim()">&#9654; Start Save Operation</button>
-      </div>
-      <div class="anim-tree">
-        <div class="anim-node" id="bn-app" data-label="Database Commit">
-          <div class="anim-node-inner">Database Commit</div>
-          <div class="anim-shadow-boundary" id="sb-app">
-            <span class="anim-sb-label">Phase 4</span>
-            <div class="anim-node" id="bn-list" data-label="After-Save Flows">
-              <div class="anim-node-inner">After-Save Flows</div>
-              <div class="anim-shadow-boundary" id="sb-list">
-                <span class="anim-sb-label">Phase 3</span>
-                <div class="anim-node" id="bn-item" data-label="Before-Save Flows">
-                  <div class="anim-node-inner">Before-Save Flows</div>
-                  <div class="anim-shadow-boundary" id="sb-item">
-                    <span class="anim-sb-label">Phase 2</span>
-                    <div class="anim-node anim-leaf" id="bn-button">
-                      <div class="anim-node-inner">Validation Rules (Phase 1)</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div class="ribbon">
+            <div class="rl"><span class="pulse"></span> What happens when a record is saved</div>
+            <div class="ribbon-track" id="ribbonTrack">
+              <div class="rib"><div class="rt">Step 1</div><div class="rn">Load record</div></div>
+              <div class="rib-arrow">→</div>
+              <div class="rib key"><div class="rt">Flow</div><div class="rn">Before-save</div></div>
+              <div class="rib-arrow">→</div>
+              <div class="rib key"><div class="rt">Rules</div><div class="rn">Validation</div></div>
+              <div class="rib-arrow">→</div>
+              <div class="rib key"><div class="rt">Flow</div><div class="rn">After-save</div></div>
+              <div class="rib-arrow">→</div>
+              <div class="rib"><div class="rt">Done</div><div class="rn">Commit</div></div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="anim-log" id="bubble-log">Click 'Start Save Operation' to see the order of execution</div>
-    </div>
-  </div>
 
-  <div class="card" id="card-6-2">
-    <h3>Save Order Summary</h3>
-    <table class="info-table">
-      <tr><th>Order</th><th>Operation</th><th>Action Permitted</th></tr>
-      <tr><td>1</td><td>System validation (Required fields, field lengths)</td><td>Stops execution on error</td></tr>
-      <tr><td>2</td><td><strong>Before-Save Record-Triggered Flows</strong></td><td>Fast field updates on current record</td></tr>
-      <tr><td>3</td><td><strong>Custom Validation Rules</strong></td><td>Stops execution on rule evaluation to TRUE[cite: 4]</td></tr>
-      <tr><td>4</td><td>Saves record to database (but does not commit)</td><td>Temporary lock on row</td></tr>
-      <tr><td>5</td><td><strong>After-Save Record-Triggered Flows</strong></td><td>Updates related child/parent records[cite: 4]</td></tr>
-      <tr><td>6</td><td>Commit to Database</td><td>Data becomes visible to other users</td></tr>
-    </table>
-  </div>
+          <div class="stat-row">
+            <div class="stat"><div class="num">3</div><div class="lab">days · 20 hours</div></div>
+            <div class="stat"><div class="num">5</div><div class="lab">types of Flow</div></div>
+            <div class="stat"><div class="num">0</div><div class="lab">lines of code required</div></div>
+            <div class="stat"><div class="num">Dec '25</div><div class="lab">Workflow &amp; Process Builder retired</div></div>
+          </div>
 
-  <div class="card" id="card-6-3">
-    <h3>Transactional Lifecycles</h3>
-    <p>Automations that run in the same transaction share limits. If any step fails, the entire transaction rolls back, restoring the database to its previous state.</p>
+          <div class="callout info"><span class="ci">🎯</span><p><b>How to use this guide.</b> A trainer can present straight from these pages, or you can explore on your own. Click the diagrams, run the mini-simulators, expand the <b>Trainer notes</b>, and test yourself with the knowledge checks. Your progress fills the bar in the sidebar.</p></div>
+        </section>
 
-    <!-- RECORD TRIGGERED PROCESSOR ANIMATION -->
-    <div class="anim-container" id="compose-anim">
-      <div class="anim-controls">
-        <button class="anim-btn" onclick="startComposeAnim()">&#9654; Run Flow Simulation</button>
-        <button class="anim-btn" onclick="resetComposeAnim()">&#8635; Reset</button>
-      </div>
-      <div class="compose-scene">
-        <div class="compose-parent" id="comp-parent">
-          <div class="compose-label">Salesforce Database Engine <span class="compose-tag">Transaction</span></div>
-          <div class="compose-children">
-            <div class="compose-child" id="comp-list">
-              <div class="compose-label">Triggering Action</div>
-              <div class="compose-items">
-                <div class="compose-item" id="ci-1" onclick="composeClick(1)">Case Closed (Status = "Closed")</div>
-                <div class="compose-item" id="ci-2" onclick="composeClick(2)">Opportunity Stage Closed-Won</div>
-                <div class="compose-item" id="ci-3" onclick="composeClick(3)">Lead Created (No Contact Info)</div>
-              </div>
-              <div class="compose-arrow-up" id="arrow-up">
-                <span>&#9650; evaluate rules</span>
-              </div>
+        <!-- ========================= FOUNDATIONS ========================= -->
+        <section id="foundations" class="section" data-nav="Salesforce in 5 minutes" data-group="Get started">
+          <div class="eyebrow"><span class="n">Foundations</span> For total beginners</div>
+          <h2>Salesforce in five minutes</h2>
+          <p class="lede">Before automation makes sense, you need four ideas: where data lives, how records relate, who can see what, and what runs when you hit Save.</p>
+
+          <div class="callout tip"><span class="ci">🌉</span><p><b>Coming from web development?</b> Think of Salesforce as a database schema + backend rules + a UI builder + a workflow engine + a permission system — all in one platform. The pieces below map onto things you already know.</p></div>
+
+          <h3>Objects, records, and fields</h3>
+          <p>Salesforce stores business data in a structure that mirrors a database:</p>
+          <div class="grid g3">
+            <div class="card"><h4>Object</h4><p>Like a database <b>table</b>. Example: <code>Job__c</code>. Custom objects and fields end in <code>__c</code>.</p></div>
+            <div class="card"><h4>Record</h4><p>Like a <b>row</b>. Example: one assigned inspection job, or one donation.</p></div>
+            <div class="card"><h4>Field</h4><p>Like a <b>column</b>. Example: <code>Status__c</code>, <code>Amount</code>, <code>Contact__c</code>.</p></div>
+          </div>
+
+          <h3>Relationships</h3>
+          <p>Relationships connect records so formulas, Flow, and code can navigate between them.</p>
+          <ul>
+            <li><b>Lookup</b> — an optional link to another record (like a nullable foreign key, but Salesforce also uses it for navigation, sharing, and reporting).</li>
+            <li><b>Master-detail</b> — a tighter parent-child link with ownership and roll-up behaviour.</li>
+            <li><b>Cross-object formula</b> — a formula that reads a field on a parent record.</li>
+          </ul>
+
+          <h3>Security is part of runtime</h3>
+          <p>A save can fail because the data is wrong <i>or</i> because the user lacks access. Security is layered: <span class="pill">Object permissions</span><span class="pill">Field-level security</span><span class="pill">Record access</span><span class="pill">Permission sets</span></p>
+          <div class="callout warn"><span class="ci">⚠</span><p>Don't debug only your automation. In Salesforce, <b>permissions are part of runtime behaviour</b> — a missing field or hidden component is often an access problem, not a logic bug.</p></div>
+
+          <h3>The save lifecycle</h3>
+          <p>When a record saves, Salesforce runs automation in a fixed order: before-save automation, validation rules, triggers, after-save automation, then async work. If two automations touch the same record, that order becomes your debugging map. We make it interactive in the <a href="#order-of-execution">Order of Execution</a> section.</p>
+
+          <details class="acc">
+            <summary><span class="tn">Trainer note</span> A mental model that sticks <span class="chev">›</span></summary>
+            <div class="acc-body">
+              <p>Ask learners to name one concrete example of each layer in an app they know — one field, one page element, one automation, one integration boundary. The goal isn't vocabulary; it's the reflex to ask <i>"which layer is this problem in?"</i> before touching config.</p>
+              <p><b>Analogy:</b> a record page is a form, a validation rule is the bouncer at the door, a before-save flow tidies your outfit before you reach the bouncer, and an after-save flow is what happens once you're safely inside.</p>
             </div>
-            <div class="compose-child" id="comp-detail">
-              <div class="compose-label">Automation Impact</div>
-              <div class="compose-detail-content" id="detail-content">
-                <div class="compose-detail-placeholder">Initialize Triggering Event</div>
-              </div>
-              <div class="compose-arrow-down" id="arrow-down">
-                <span>&#9660; apply state change</span>
-              </div>
+          </details>
+        </section>
+
+        <!-- ========================= FORMULAS ========================= -->
+        <section id="formulas" class="section" data-nav="Formulas" data-group="Data quality">
+          <div class="eyebrow"><span class="n">Data quality</span> Show, don't ask</div>
+          <h2>Formula fields</h2>
+          <p class="lede">A formula field calculates a read-only value from other fields — automatically, everywhere Salesforce needs it.</p>
+
+          <div class="teach">
+            <div class="teach-row"><span class="tag what">What</span><p>A formula field is like a <b>getter method</b> on a record. It recalculates a result from other fields whenever Salesforce displays, queries, reports, or automates with that value.</p></div>
+            <div class="teach-row"><span class="tag why">Why</span><p>It lets admins and users <b>see derived information</b> — a status, a label, a due date — without anyone calculating or maintaining it by hand.</p></div>
+            <div class="teach-row"><span class="tag when">When</span><p>Use a formula to <b>explain or classify</b> data: a readiness label, a joined display name, a date seven days out, a category from a number.</p></div>
+            <div class="teach-row"><span class="tag not">When not</span><p>Don't use a formula to <b>store process state</b> you want to edit or report on historically — formulas are always recalculated and can't be set manually. For that, use a real field updated by automation.</p></div>
+          </div>
+
+          <h3>Functions you'll actually use</h3>
+          <div class="table-wrap"><table class="cmp">
+            <thead><tr><th>Category</th><th>Functions</th></tr></thead>
+            <tbody>
+              <tr><td>Logic</td><td><code>AND, OR, NOT, IF, CASE, ISBLANK, ISPICKVAL, ISNUMBER, ISNEW, ISCHANGED, PRIORVALUE, BLANKVALUE</code></td></tr>
+              <tr><td>Text</td><td><code>TEXT, VALUE, LEN, CONTAINS, BEGINS, FIND, INCLUDES, ISPICKVAL</code></td></tr>
+              <tr><td>Date &amp; time</td><td><code>TODAY, NOW, DATE, DATEVALUE, YEAR, MONTH, DAY, ADDMONTHS</code></td></tr>
+              <tr><td>Math</td><td><code>ABS, MAX, MIN, ROUND, DISTANCE</code> · operators <code>+ - * / ( )</code></td></tr>
+            </tbody>
+          </table></div>
+          <div class="callout tip"><span class="ci">✅</span><p>Prefer <b><code>ISBLANK</code></b> over <code>ISNULL</code> in new formulas — same behaviour, but ISBLANK also works on text fields.</p></div>
+
+          <h3>Worked examples</h3>
+          <h4>Readiness label — the most useful pattern</h4>
+          <p>A nested <code>IF</code> that reports the <i>first</i> missing requirement, so it's obvious in a list view:</p>
+          <div class="code" data-code><div class="bar"><span class="lang">Formula · Text</span><button class="cp">Copy</button></div><pre>IF( ISBLANK(Worker__c), "Missing Worker",
+IF( ISBLANK(JobTemplate__c), "Missing Template",
+    "Ready" ))</pre></div>
+
+          <h4>A scannable list label</h4>
+          <div class="code" data-code><div class="bar"><span class="lang">Formula · Text</span><button class="cp">Copy</button></div><pre>Name &amp; " | " &amp; TEXT(Status__c) &amp; " | " &amp; JobTemplate__r.Name</pre></div>
+          <p style="font-size:14.5px;color:var(--muted)">Join fields with <code>&amp;</code>. Convert a picklist to text with <code>TEXT()</code>, and read a parent field with <code>Parent__r.Field</code>.</p>
+
+          <h4>A follow-up date</h4>
+          <div class="code" data-code><div class="bar"><span class="lang">Formula · Date</span><button class="cp">Copy</button></div><pre>DATEVALUE(CreatedDate) + 7</pre></div>
+          <p style="font-size:14.5px;color:var(--muted)"><code>CreatedDate</code> is a Date/Time, so <code>DATEVALUE()</code> converts it to a Date before the maths.</p>
+
+          <h3>Common mistakes</h3>
+          <div class="grid g2">
+            <div class="card"><h4>❌ Forgetting blank checks</h4><p>Relationship fields can be empty. Test with <code>ISBLANK</code> before you rely on a related value, or your label lies (e.g. "Ready" when the Worker is missing).</p></div>
+            <div class="card"><h4>❌ Comparing picklists as text</h4><p>Use <code>ISPICKVAL(Status__c, 'Assigned')</code> rather than <code>Status__c = "Assigned"</code>.</p></div>
+          </div>
+
+          <details class="acc">
+            <summary><span class="tn">Trainer note</span> "Why not just a text field?" <span class="chev">›</span></summary>
+            <div class="acc-body"><p>A great discussion prompt for a readiness field. A text field can drift out of sync the moment someone edits a record without triggering your automation. A formula is <i>always</i> correct because it's recalculated on read. Trade-off: you can't report on its history or set it manually.</p></div>
+          </details>
+        </section>
+
+        <!-- ========================= VALIDATION ========================= -->
+        <section id="validation" class="section" data-nav="Validation rules" data-group="Data quality">
+          <div class="eyebrow"><span class="n">Data quality</span> Stop bad data</div>
+          <h2>Validation rules</h2>
+          <p class="lede">A validation rule is a boolean formula for a <i>bad state</i>. Write it so it returns <code>TRUE</code> only when Salesforce should block the save.</p>
+
+          <div class="teach">
+            <div class="teach-row"><span class="tag what">What</span><p>It verifies data <b>before the record can be saved</b>. The formula returns True or False; on <b>True</b>, the save is blocked and your error message appears.</p></div>
+            <div class="teach-row"><span class="tag why">Why</span><p>It protects <b>every entry point at once</b> — UI, Flow, Apex, imports, and integrations — so invalid data never reaches your database or downstream API.</p></div>
+            <div class="teach-row"><span class="tag when">When</span><p>Use it to <b>prevent impossible states</b>: "Assigned" without a worker, a template missing before assignment, a date outside the current year.</p></div>
+            <div class="teach-row"><span class="tag not">When not</span><p>Be careful — because it blocks <i>everything</i>, your own automation and tests must obey it too. Don't encode temporary or migration-only checks without a <b>bypass</b> (see Record-Triggered Flows).</p></div>
+          </div>
+
+          <div class="callout danger"><span class="ci">⚠</span><p><b>Important.</b> Validation rules apply to new and updated records even if the referenced fields aren't on the layout or in the API call. They do <b>not</b> apply to Quick Create. Verify each rule against every page layout and integration on the object.</p></div>
+
+          <h3>The fields you set</h3>
+          <div class="table-wrap"><table class="cmp">
+            <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>Rule Name</td><td>A label with no spaces/underscores, e.g. <code>CityRequiredIfStreetIs</code>.</td></tr>
+              <tr><td>Active</td><td>Whether the rule is enabled.</td></tr>
+              <tr><td>Description</td><td>≤ 255 chars, internal only.</td></tr>
+              <tr><td>Error Condition Formula</td><td>The expression that returns True to block the save.</td></tr>
+              <tr><td>Error Message</td><td>Shown to the user when the rule fires.</td></tr>
+              <tr><td>Error Location</td><td>Top of Page or a specific field. If that field is deleted, read-only, or hidden, Salesforce reverts to Top of Page.</td></tr>
+            </tbody>
+          </table></div>
+
+          <h3>Try it — a live validation simulator</h3>
+          <p>This mimics a record save with two rules active: <b>Assigned requires a Worker</b> and <b>Assigned requires a Template</b>. Change the values and press Save.</p>
+          <div class="sfmock" id="valSim">
+            <div class="sf-head">📝 New Job — Salesforce record</div>
+            <div class="sf-body">
+              <div class="field"><label>Status</label><select id="vsStatus"><option>Draft</option><option>Assigned</option><option>Completed</option></select></div>
+              <div class="field"><label>Worker</label><input id="vsWorker" placeholder="Leave blank to test the rule…"/></div>
+              <div class="field"><label>Job Template</label><input id="vsTemplate" placeholder="e.g. Solar Site Survey"/></div>
+            </div>
+            <div class="result" id="vsResult"></div>
+            <div class="sf-foot"><button class="btn ghost" id="vsReset">Reset</button><button class="btn primary" id="vsSave">Save record</button></div>
+          </div>
+          <p style="font-size:14px;color:var(--muted)">Behind the scenes: <code>AND(ISPICKVAL(Status__c,'Assigned'), ISBLANK(Worker__c))</code> → "Select a Worker before setting the job to Assigned."</p>
+
+          <h3>The golden rule for messages</h3>
+          <div class="callout tip"><span class="ci">💬</span><p>The best validation message tells the user <b>exactly how to fix the record</b>. "Invalid data" is useless; "Choose or create a named Job Template before assigning this job" is a fix.</p></div>
+
+          <details class="acc">
+            <summary><span class="tn">Trainer note</span> When a new rule breaks Apex tests <span class="chev">›</span></summary>
+            <div class="acc-body"><p>A new validation rule often breaks existing Apex tests because the test data no longer represents a savable record. Ask learners: <i>what test data must change?</i> This is the moment they feel how validation touches every path, not just the UI.</p></div>
+          </details>
+        </section>
+
+        <!-- ========================= ORDER OF EXECUTION ========================= -->
+        <section id="order-of-execution" class="section" data-nav="Order of execution" data-group="Data quality">
+          <div class="eyebrow"><span class="n">The backbone</span> Interactive</div>
+          <h2>Order of execution</h2>
+          <p class="lede">Every automation you build shares one save transaction. Knowing what runs when is the single most useful thing you can memorise.</p>
+
+          <div class="ooe" id="ooe">
+            <div class="ooe-controls">
+              <button class="btn primary" id="ooePlay">▶ Play the save</button>
+              <button class="btn ghost" id="ooeReset">↺ Reset</button>
+              <span class="step-label" id="ooeLabel">Insert / update / upsert statement</span>
+            </div>
+            <div class="ooe-list" id="ooeList"><!-- injected --></div>
+          </div>
+
+          <div class="callout warn"><span class="ci">↻</span><p><b>Recursion.</b> If a workflow, flow, or trigger updates the <i>same</i> record, Salesforce can re-run the cycle. This is why entry criteria and "only when changed" conditions matter — they stop your automation from firing itself in a loop.</p></div>
+
+          <div class="grid g2">
+            <div class="card"><h4>Where before-save flow sits</h4><p>Right at the start — <b>before validation rules</b>. That's why a before-save flow can set a value that then passes (or fails) validation, and why it's the fastest place to update the triggering record.</p></div>
+            <div class="card"><h4>Where after-save flow sits</h4><p>After the record has an Id and after triggers. Use it for related records, notifications, subflows, and asynchronous work.</p></div>
+          </div>
+
+          <details class="acc">
+            <summary><span class="tn">Trainer note</span> Turning order of execution into a debugging habit <span class="chev">›</span></summary>
+            <div class="acc-body"><p>When "something updates my record and I don't know what," walk the order top to bottom and ask at each stage: <i>could this stage be the culprit?</i> Nine times out of ten the answer is "a before-save flow, a trigger, or recursion." Have learners narrate the order aloud once — it sticks far better than reading it.</p></div>
+          </details>
+        </section>
+
+        <!-- ========================= FLOW BASICS ========================= -->
+        <section id="flow-basics" class="section" data-nav="Flow fundamentals" data-group="Flow">
+          <div class="eyebrow"><span class="n">Flow</span> The main tool</div>
+          <h2>Flow fundamentals</h2>
+          <p class="lede">Flow is Salesforce's most powerful declarative automation tool. You build logic visually with drag-and-drop elements — no code.</p>
+
+          <div class="teach">
+            <div class="teach-row"><span class="tag what">What</span><p>A visual builder that can <b>create, update, delete, and query records</b>, send emails, make decisions, and call Apex — with or without user interaction.</p></div>
+            <div class="teach-row"><span class="tag why">Why</span><p>It replaced Workflow Rules and Process Builder with far greater capability and better performance, and it's now the <b>only</b> tool for new automation.</p></div>
+          </div>
+
+          <div class="callout danger"><span class="ci">📅</span><p><b>Workflow Rules and Process Builder reached End of Support on 31 December 2025.</b> They still execute but get no support or bug fixes, and you can't create new ones. All new automation is built in <b>Flow Builder</b>.</p></div>
+
+          <h3>The five types of Flow</h3>
+          <p>Every type runs <b>autolaunched</b> (in the background, no user input) <i>except</i> the Screen Flow, which is interactive.</p>
+          <div class="grid g2">
+            <div class="card hover"><h4>🖥️ Screen Flow</h4><p>Guides users through a process from Lightning pages, Experience Cloud, and quick actions. <b>Interactive.</b></p></div>
+            <div class="card hover"><h4>⚡ Record-Triggered</h4><p>Runs when a record is created, updated, or deleted. Runs in the background.</p></div>
+            <div class="card hover"><h4>🕐 Schedule-Triggered</h4><p>Runs at a set time and frequency for each record in a batch.</p></div>
+            <div class="card hover"><h4>📡 Platform Event-Triggered</h4><p>Runs when a platform event message is received.</p></div>
+            <div class="card hover"><h4>✨ Autolaunched (no trigger)</h4><p>Runs when invoked by Apex, processes, or the REST API. Great as a subflow.</p></div>
+          </div>
+
+          <h3>The building blocks (Resources)</h3>
+          <div class="grid g2">
+            <div class="card"><h4>Variable</h4><p>Stores a value: Text, Number, Record, Date, Currency, Boolean, Picklist… A <b>record variable</b> holds one record.</p></div>
+            <div class="card"><h4>Collection</h4><p>A list of values — used to process many records at once. A <b>record collection</b> holds a list of records.</p></div>
+            <div class="card"><h4>Constant</h4><p>A value you set once and never change; handy when referenced repeatedly.</p></div>
+            <div class="card"><h4>Formula</h4><p>A dynamic value derived from other values inside the flow.</p></div>
+          </div>
+
+          <h3>Explore the elements</h3>
+          <p>These are the pieces you drag onto the canvas. Click one to see what it's for, when to use it, and the classic mistake.</p>
+          <div class="palette" id="palette"><!-- injected --></div>
+          <div class="pel-detail" id="palDetail"><h4>Pick an element</h4><div class="row">Click any element above to learn its purpose, typical usage, best practice, and common mistake.</div></div>
+
+          <div class="callout info"><span class="ci">📖</span><p><b>Vocabulary.</b> An <b>element</b> is one step in a flow (Screen, Decision, Get Records…). A <b>resource</b> is a value the flow uses (variable, formula, constant, record, collection). <code>recordId</code> is a common input variable that receives the current record's Id from a Lightning page.</p></div>
+        </section>
+
+        <!-- ========================= SCREEN FLOWS ========================= -->
+        <section id="screen-flows" class="section" data-nav="Screen flows" data-group="Flow">
+          <div class="eyebrow"><span class="n">Flow · Interactive</span> Guided workflows</div>
+          <h2>Screen flows</h2>
+          <p class="lede">Use a Screen Flow whenever a human needs to choose, review, confirm, or enter information — a guided, step-by-step workspace.</p>
+
+          <div class="teach">
+            <div class="teach-row"><span class="tag when">When</span><p>A person must <b>provide input or make a decision</b>: a guided job reassignment, a registration form, a contract walkthrough, a quick account setup.</p></div>
+            <div class="teach-row"><span class="tag not">When not</span><p>For silent same-record updates or bulk background work — those are record-triggered or scheduled flows. Screen flows should stay light and fast.</p></div>
+          </div>
+
+          <h3>The interface</h3>
+          <div class="grid g3">
+            <div class="card"><h4>Canvas</h4><p>The workspace where you arrange elements.</p></div>
+            <div class="card"><h4>Components drawer</h4><p>The layout inputs you drag onto a screen.</p></div>
+            <div class="card"><h4>Screen properties</h4><p>Where you set the label and API name.</p></div>
+          </div>
+
+          <h3>Configuring a screen</h3>
+          <div class="grid g2">
+            <div class="card"><h4>Header &amp; footer</h4><p>Toggle each on/off. The <b>header</b> shows the running flow's name; the <b>footer</b> holds Pause / Previous / Next / Finish, each of which can use a standard or custom label, or be hidden.</p></div>
+            <div class="card"><h4>Provide Help</h4><p>Add help text to a screen or component; a 🛈 appears after the label. Hide the header and its 🛈 disappears too.</p></div>
+            <div class="card"><h4>Component visibility</h4><p>Show a component only when relevant — <code>Always</code>, <code>All (AND)</code>, <code>Any (OR)</code>, or custom logic. Example: only ask for an email if the user opts into newsletters.</p></div>
+            <div class="card"><h4>Validate Input</h4><p>Per-component; shows an error if the formula is <b>true</b> and keeps the user on the screen until it's fixed.</p></div>
+          </div>
+
+          <h4>Validate Input vs. Validation Rule</h4>
+          <div class="table-wrap"><table class="cmp">
+            <thead><tr><th>Aspect</th><th>Validate Input (screen)</th><th>Validation Rule (record)</th></tr></thead>
+            <tbody>
+              <tr><td>On bad input</td><td>Blocks <b>Next</b>; user stays and corrects it</td><td>Fails the whole flow at save</td></tr>
+              <tr><td>Feel</td><td>Guided, forgiving</td><td>Hard stop, error thrown</td></tr>
+              <tr><td>Scope</td><td>Just that screen component</td><td>Every save path on the object</td></tr>
+            </tbody>
+          </table></div>
+
+          <h3>Try it — a guided screen</h3>
+          <p>A mini "request a callback" screen with component-level input validation. Enter a bad email or leave a field blank and press Next.</p>
+          <div class="sfmock" id="screenSim">
+            <div class="sf-head">☎️ Request a callback</div>
+            <div class="sf-body">
+              <div class="field"><label>Your name</label><input id="ssName" placeholder="Ada Lovelace"/><div class="err" id="ssNameErr">Please enter your name.</div></div>
+              <div class="field"><label>Email</label><input id="ssEmail" placeholder="you@example.com"/><div class="err" id="ssEmailErr">Enter a valid email address (must contain @).</div></div>
+              <div class="field" id="ssPhoneField" style="display:none"><label>Phone</label><input id="ssPhone" placeholder="+230 …"/><div class="err" id="ssPhoneErr">Enter a phone number.</div></div>
+              <div class="field"><label><input type="checkbox" id="ssWantsCall" style="width:auto;margin-right:8px"/>I'd prefer a phone call</label></div>
+            </div>
+            <div class="result" id="ssResult"></div>
+            <div class="sf-foot"><button class="btn ghost" id="ssReset">Reset</button><button class="btn primary" id="ssNext">Next →</button></div>
+          </div>
+          <p style="font-size:14px;color:var(--muted)">The Phone field uses <b>component visibility</b> — it appears only when "prefer a phone call" is ticked.</p>
+
+          <h3>Record fields on flow screens</h3>
+          <ul>
+            <li>Add existing fields from the <b>Fields</b> tab — name, type, help text, requiredness, and values are configured automatically once you supply a <b>record variable</b>.</li>
+            <li>You <b>can't</b> mark a record field required on the screen — it's required only if the field's own "required" checkbox is set. Workaround: use an input picklist, or check on Next and return to the previous screen with an error.</li>
+            <li>Record type filters values if a record type Id is set on entry. Use the <b>Choice Lookup</b> component to limit records based on user actions.</li>
+          </ul>
+
+          <h3>Best practices</h3>
+          <ul>
+            <li>Name the <code>recordId</code> variable and tick <b>Available for input</b> so it receives the current record's Id.</li>
+            <li>Add <b>fault paths</b> to DML and Apex actions that connect to a screen, so errors are shown.</li>
+            <li>Use component visibility instead of duplicating screens.</li>
+            <li>Use subflows to cut duplication; avoid heavy record processing on screens (slow UX).</li>
+            <li><b>No DML after the last screen</b> — if the user closes instead of clicking Finish, it won't run.</li>
+          </ul>
+        </section>
+
+        <!-- ========================= RECORD-TRIGGERED ========================= -->
+        <section id="record-triggered" class="section" data-nav="Record-triggered flows" data-group="Flow">
+          <div class="eyebrow"><span class="n">Flow · Interactive</span> Automation on save</div>
+          <h2>Record-triggered flows</h2>
+          <p class="lede">Automatically perform actions in the background based on Create, Update, or Delete events — the modern replacement for Workflow and Process Builder.</p>
+
+          <h3>The shape of a record-triggered flow</h3>
+          <p>Click each node to walk a typical flow: an event fires, entry criteria filter it, a decision routes it, records are updated, done.</p>
+          <div class="flowdiag">
+            <div class="fd-canvas" id="rtDiagram"><!-- injected --></div>
+            <div class="fd-detail" id="rtDetail"><h4>Click a step</h4><p>Each node explains what it does and why it's there.</p></div>
+          </div>
+
+          <h3>The two configuration questions</h3>
+          <div class="grid g2">
+            <div class="card"><h4>1 · Trigger time</h4><p>A record is <b>created</b>, <b>updated</b>, <b>created or updated</b>, or <b>deleted</b>.</p></div>
+            <div class="card"><h4>2 · Run time</h4><p><b>Before save</b> — fast; update the triggering record via <code>$Record</code>. <b>After save</b> — richer; access any record, do related work.</p></div>
+          </div>
+
+          <h4>Before save vs. after save</h4>
+          <div class="table-wrap"><table class="cmp">
+            <thead><tr><th>Aspect</th><th>Before save</th><th>After save</th></tr></thead>
+            <tbody>
+              <tr><td>Speed</td><td class="yes">Fastest</td><td>Slower (full transaction)</td></tr>
+              <tr><td>Best for</td><td>Same-record field updates</td><td>Related records, emails, subflows, async</td></tr>
+              <tr><td>Record Id available?</td><td>On insert, not yet</td><td class="yes">Yes</td></tr>
+              <tr><td>How you set fields</td><td>Assignment on <code>$Record</code></td><td>Update Records element</td></tr>
+            </tbody>
+          </table></div>
+
+          <h3>New vs. updated records</h3>
+          <p>A Decision routes new records from updated ones. Create a <b>Formula</b> resource — <code>ISNEW()</code> and <code>ISCHANGED()</code> exist <i>only</i> in record-triggered flows — then check <code>{!IsNew} = True</code>.</p>
+          <div class="code" data-code><div class="bar"><span class="lang">Formula resource · Boolean</span><button class="cp">Copy</button></div><pre>ISNEW()</pre></div>
+
+          <h3>Bypassing a flow with a Custom Setting</h3>
+          <p>A common, senior-level pattern: a <b>CheckBypass</b> Decision near the start reads a hierarchy custom setting so admins or data loads can switch the flow off per user or profile.</p>
+          <div class="code" data-code><div class="bar"><span class="lang">Decision outcome · condition</span><button class="cp">Copy</button></div><pre>Resource:  $Setup.CS_Bypass__c.BypassFlow__c
+Operator:  Contains
+Value:     "AccBeforeInsertUpdate"</pre></div>
+
+          <h3>Scheduled &amp; asynchronous paths</h3>
+          <div class="grid g2">
+            <div class="card"><h4>Scheduled path</h4><p>Runs a path a set time after the trigger (or based on a date field). Set a <b>Time Source</b>, <b>Offset Number</b>, and <b>Offset Options</b> (e.g. "2 Minutes After"). Interviews are queued and may be delayed.</p></div>
+            <div class="card"><h4>Asynchronous path</h4><p><b>Required for external callouts.</b> Runs after the main save transaction so it never blocks the save. Toggle "Add Asynchronous Path" on.</p></div>
+          </div>
+
+          <h3>Process-based architecture &amp; the Flow Trigger Explorer</h3>
+          <p>The <b>Flow Trigger Explorer</b> shows every triggered automation for an object in one place and lets you control execution order. Standard flows (shipped by Salesforce) appear too — you can't reorder them, but you can order your flows around them.</p>
+          <ol>
+            <li>Each business process = a different flow.</li>
+            <li>Name each flow <code>XXX - «Business Process»</code>, where XXX abbreviates the triggering object.</li>
+            <li>Separate common logic into subflows.</li>
+            <li>Use well-defined entry criteria to avoid unnecessary execution.</li>
+          </ol>
+
+          <details class="acc">
+            <summary><span class="tn">Trainer note</span> How this maps to an Apex trigger <span class="chev">›</span></summary>
+            <div class="acc-body">
+              <p>For learners who'll meet Apex later, Flow's before/after + insert/update/delete options mirror the trigger context many teams route through a handler class:</p>
+              <div class="code" data-code><div class="bar"><span class="lang">Apex</span><button class="cp">Copy</button></div><pre>trigger AccountTrigger on Account (before insert, before update, after insert, after update) {
+  if (Trigger.isBefore &amp;&amp; Trigger.isInsert) AccountTriggerHandler.beforeInsert(Trigger.new);
+  if (Trigger.isAfter  &amp;&amp; Trigger.isUpdate) AccountTriggerHandler.afterUpdate(Trigger.new, Trigger.oldMap);
+}</pre></div>
+              <p>The point isn't the syntax — it's that "before vs after" and "insert vs update" are the same idea in both worlds.</p>
+            </div>
+          </details>
+        </section>
+
+        <!-- ========================= AUTOLAUNCHED ========================= -->
+        <section id="autolaunched" class="section" data-nav="Autolaunched flows" data-group="Flow">
+          <div class="eyebrow"><span class="n">Flow</span> Reusable logic</div>
+          <h2>Autolaunched flows</h2>
+          <p class="lede">An autolaunched flow (no trigger) runs in the background when invoked by Apex, a process, or the REST API — and, most usefully, as a subflow.</p>
+
+          <div class="teach">
+            <div class="teach-row"><span class="tag when">When</span><p>You have <b>logic that repeats</b> across flows — a readiness check, a rounding rule, an eligibility test. Build it once, call it everywhere.</p></div>
+            <div class="teach-row"><span class="tag why">Why</span><p>One subflow means <b>one place to fix a bug</b> and no duplicated logic drifting out of sync across branches.</p></div>
+          </div>
+
+          <div class="callout info"><span class="ci">♻</span><p>We normally use an autolaunched flow as a <b>subflow</b> inside another flow type — most often a record-triggered flow — so repeated logic lives in exactly one place.</p></div>
+
+          <div class="grid g2">
+            <div class="card"><h4>Example — reusable eligibility</h4><p>A "Less than 2 years?" subflow called from multiple decision branches, instead of rebuilding the same check three times.</p></div>
+            <div class="card"><h4>Example — readiness check</h4><p>A "Job readiness" subflow that both a screen flow and a record-triggered flow can call to get a consistent answer.</p></div>
+          </div>
+        </section>
+
+        <!-- ========================= SCHEDULED ========================= -->
+        <section id="scheduled" class="section" data-nav="Scheduled flows" data-group="Flow">
+          <div class="eyebrow"><span class="n">Flow</span> Time-based</div>
+          <h2>Scheduled flows</h2>
+          <p class="lede">Run flows at a set interval and time to schedule periodic actions automatically — no one has to click a thing.</p>
+
+          <div class="teach">
+            <div class="teach-row"><span class="tag when">When</span><p><b>Recurring, batched work:</b> clean up outdated data, send monthly emails, generate weekly reminders across a set of records.</p></div>
+            <div class="teach-row"><span class="tag not">When not</span><p>For anything that must react <i>immediately</i> to a record change — that's a record-triggered flow. Scheduled flows run on a clock, not on events.</p></div>
+          </div>
+
+          <h3>Set a schedule</h3>
+          <p>The defining option is <b>Set Schedule</b>. You configure a <b>Start Date</b>, a <b>Start Time</b>, and a <b>Frequency</b> of <code>Once</code>, <code>Daily</code>, or <code>Weekly</code>.</p>
+          <div class="grid g3">
+            <div class="card"><h4>🧹 Clean-up</h4><p>Delete or archive obsolete records overnight.</p></div>
+            <div class="card"><h4>📧 Reminders</h4><p>Send monthly membership-renewal emails.</p></div>
+            <div class="card"><h4>📊 Roll-ups</h4><p>Recompute weekly summaries across records.</p></div>
+          </div>
+        </section>
+
+        <!-- ========================= CHOOSING ========================= -->
+        <section id="choosing" class="section" data-nav="Which automation?" data-group="Master it">
+          <div class="eyebrow"><span class="n">Decision-making</span> The senior skill</div>
+          <h2>Choosing the right automation</h2>
+          <p class="lede">The real skill isn't building a flow — it's choosing the <i>smallest tool that fits</i>. Compare the options, then test yourself with the decision engine.</p>
+
+          <div class="tabs" id="cmpTabs">
+            <div class="tab-btns" id="cmpBtns"><!-- injected --></div>
+            <div id="cmpPanels"><!-- injected --></div>
+          </div>
+
+          <h3>Every flow type at a glance</h3>
+          <div class="table-wrap"><table class="cmp">
+            <thead><tr><th>Flow type</th><th>Launch independently</th><th>Specialty</th><th>Use case</th></tr></thead>
+            <tbody>
+              <tr><td>Screen Flow</td><td class="no">✕</td><td>Interacts with users; shows an interface</td><td>Registration form · guided reassignment</td></tr>
+              <tr><td>Autolaunched Flow</td><td class="no">✕</td><td>Backend only; called from many places</td><td>Used as a subflow</td></tr>
+              <tr><td>Record-Triggered</td><td class="yes">✓</td><td>Replaces Workflow &amp; Process Builder</td><td>Update account when a case is closed</td></tr>
+              <tr><td>Schedule-Triggered</td><td class="yes">✓</td><td>Scheduled, batched actions</td><td>Delete obsolete data · monthly emails</td></tr>
+              <tr><td>Platform Event-Triggered</td><td class="yes">✓</td><td>Reacts to a platform event</td><td>Notify admins on a platform event</td></tr>
+            </tbody>
+          </table></div>
+          <p style="font-size:13.5px;color:var(--muted)">"Launch independently" = triggered without being called from another interface (e.g. a Lightning page).</p>
+
+          <div class="callout tip"><span class="ci">🧭</span><p><b>A quick heuristic.</b> Display a value → <b>formula</b>. Block bad data → <b>validation rule</b>. Human input → <b>screen flow</b>. React to a save on the same record, fast → <b>before-save</b>. React to a save with related work → <b>after-save</b>. External callout → <b>async path or Apex</b>. On a clock → <b>scheduled</b>. Repeated logic → <b>subflow</b>.</p></div>
+        </section>
+
+        <!-- ========================= DEBUGGING ========================= -->
+        <section id="debugging" class="section" data-nav="Debugging" data-group="Master it">
+          <div class="eyebrow"><span class="n">Master it</span> Find &amp; fix</div>
+          <h2>Debugging</h2>
+          <p class="lede">Three ways to see what a flow really did: the built-in debugger, failed flow interviews, and flow error emails.</p>
+
+          <div class="grid g2">
+            <div class="card"><h4>Record-triggered debugger</h4><p><b>Always runs in rollback mode</b> — your data is safe. You can skip start conditions and run the flow as if the record is Created or Updated. It shows the exact <b>path taken</b> and lets you expose the details behind each node, including <i>why</i> an outcome was skipped.</p></div>
+            <div class="card"><h4>Screen flow debugger</h4><p><b>Does not run in rollback</b> — changes can commit, so use safe test records. You can set input variables marked "Available for input" (e.g. paste a <code>recordId</code>). Debug details appear on the right as the flow runs.</p></div>
+          </div>
+          <div class="callout tip"><span class="ci">🔧</span><p>To enable <b>"Run flow as another user"</b>: Setup → Process Automation → Process Automation Settings → tick <b>"Let admins debug flows as other users"</b>.</p></div>
+
+          <h3>Error emails &amp; failed flow interviews</h3>
+          <p>By default, the user who last edited a flow gets an email when <i>any</i> user hits an error with it. In Process Automation Settings you can route this to all <b>Apex Exception Email</b> recipients. The email links to the failed flow version so you can review each element on the canvas. In Setup, search <b>Paused and Failed Flow Interviews</b> for a list view of both.</p>
+
+          <h3>Field-tested debug playbooks</h3>
+          <div class="grid g2">
+            <div class="card"><h4>Validation blocks automation</h4><p>Read the exact error (Flow debug / Apex output / Data Loader CSV) → find the object &amp; field changed → reproduce the smallest failing record → decide: automation supplies the data, or the rule excludes a trusted path.</p></div>
+            <div class="card"><h4>Flow updates the wrong records</h4><p>Confirm trigger object &amp; entry criteria → check Get Records filters (first record vs all) → add a Decision for null/empty collections → review the debug path before activating.</p></div>
+            <div class="card"><h4>Page looks wrong</h4><p>Check app/profile/record-type activation for the Lightning page → field-level security &amp; permission sets → component visibility filters → the browser console for LWC/iframe errors.</p></div>
+            <div class="card"><h4>Automations conflict</h4><p>If Flow &amp; Apex both update a record, review order of execution &amp; recursion. If Flow &amp; validation conflict, inspect the exact values the flow tries to save.</p></div>
+          </div>
+          <div class="callout info"><span class="ci">🔎</span><p><b>The senior habit:</b> isolate the failing <i>boundary</i> before changing configuration. Reproduce the smallest failing case, then fix exactly one thing.</p></div>
+        </section>
+
+        <!-- ========================= BEST PRACTICES ========================= -->
+        <section id="best-practices" class="section" data-nav="Best practices" data-group="Master it">
+          <div class="eyebrow"><span class="n">Master it</span> Ship it well</div>
+          <h2>Best practices</h2>
+          <p class="lede">The habits that keep flows fast, safe, debuggable, and maintainable as your org grows.</p>
+
+          <h3>The essentials</h3>
+          <div class="grid g2">
+            <div class="card"><h4>Document &amp; name</h4><p>Add descriptions to every element and variable, and keep naming consistent. A flow you can't read is a flow you can't fix.</p></div>
+            <div class="card"><h4>Always test</h4><p>Debug before you activate, and test as the running user — not just as an admin who can see everything.</p></div>
+            <div class="card"><h4>Never DML in a loop</h4><p>No Get / Create / Update / Delete (pink data elements) inside a Loop. Assign inside the loop; do a single DML <b>outside</b> it.</p></div>
+            <div class="card"><h4>Plan for faults</h4><p>Add fault paths to DML, subflows, Apex actions, and callouts. Show the user what failed and what to do next.</p></div>
+            <div class="card"><h4>Check null &amp; empty</h4><p>In Decisions, check for null or empty results before acting on records. Don't assume the happy path.</p></div>
+            <div class="card"><h4>Don't hard-code Ids</h4><p>Use Constants or custom settings — hard-coded Ids break the moment you deploy to another org.</p></div>
+            <div class="card"><h4>Use subflows</h4><p>Extract repeated logic. Avoid deeply nested Decisions — group conditions and use formula resources.</p></div>
+            <div class="card"><h4>Tidy before activating</h4><p>Remove unused elements &amp; variables; check "available for input/output" only where truly needed. Don't create a flow for everything.</p></div>
+          </div>
+
+          <h3>Concepts worth knowing (even before Apex)</h3>
+          <div class="grid g2">
+            <div class="card"><h4>Governor limits</h4><p>Salesforce is multi-tenant, so it caps how much any transaction can do — SOQL queries, DML statements, CPU time. DML-in-a-loop is dangerous because it multiplies those counts per record.</p></div>
+            <div class="card"><h4>Bulkification</h4><p>Design so one flow run handles <b>many</b> records safely: query once, assign in a loop, update once. This is why "no DML in loops" exists.</p></div>
+            <div class="card"><h4>Order of execution</h4><p>Everything shares one save transaction — before-save, validation, after-save, commit. Do the least work at the right moment.</p></div>
+            <div class="card"><h4>Recursion</h4><p>An automation that updates its own trigger record can re-fire the cycle. Tight entry criteria and "only when changed" conditions prevent loops.</p></div>
+          </div>
+
+          <div class="callout tip"><span class="ci">📛</span><p><b>Naming convention.</b> Record-triggered flows: <code>XXX - «Business Process»</code> where XXX abbreviates the triggering object. Consistent names make the Flow Trigger Explorer readable at a glance.</p></div>
+        </section>
+
+        <!-- ========================= KNOWLEDGE CHECK ========================= -->
+        <section id="knowledge-check" class="section" data-nav="Knowledge checks" data-group="Master it">
+          <div class="eyebrow"><span class="n">Test yourself</span> Reveal answers</div>
+          <h2>Knowledge checks</h2>
+          <p class="lede">Quick questions to confirm the ideas landed. Pick an answer to reveal whether it's right and why.</p>
+
+          <div id="quizWrap"><!-- injected --></div>
+
+          <h3>Final challenge — the decision engine</h3>
+          <p>You're the admin. For each business requirement, choose the automation you'd reach for, then reveal the recommended answer and the reasoning.</p>
+          <div class="engine" id="engine">
+            <div class="scen" id="engScen"><div class="lbl">Requirement</div><span id="engText">Loading…</span></div>
+            <div class="choices" id="engChoices"></div>
+            <div class="verdict" id="engVerdict"></div>
+            <div class="enav">
+              <span class="prog" id="engProg"></span>
+              <button class="btn primary" id="engNext" style="display:none">Next requirement →</button>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="anim-log" id="compose-log">Select an event on the left to see the lifecycle execution log</div>
-    </div>
-  </div>
-</section>
 
-<!-- ─── S-7: AUTOLAUNCHED FLOWS ─── -->
-<section class="section" id="s-7">
-  <div class="module-header">
-    <div class="module-number">7</div>
-    <div class="module-title">Autolaunched Flows</div>
-    <div class="module-subtitle">Subflows, variable sharing, input/output parameters, and modular design</div>
-  </div>
+          <div class="callout tip" style="margin-top:26px"><span class="ci">🎓</span><p><b>You've finished the guide.</b> You can now enforce data quality with formulas and validation, build every type of Flow, choose the right automation for a requirement, and debug when something breaks. Revisit any section from the sidebar — your progress is saved as you go.</p></div>
+        </section>
 
-  <div class="card" id="card-7-1">
-    <h3>Building Reusable Flows</h3>
-    <p>Autolaunched Flows do not have a user interface[cite: 4]. They are designed to run in the background[cite: 4], and are called from other flows (as Subflows), Apex classes, or REST APIs[cite: 4].</p>
-  </div>
+      </div><!-- /.content -->
 
-  <div class="card" id="card-7-2">
-    <h3>Input and Output Parameters</h3>
-    <p>To pass data in and out of a subflow, you must configure its variables correctly[cite: 4].</p>
-    <ul>
-      <li><strong>Available for Input:</strong> Allows the parent flow or calling process to pass data into the subflow[cite: 4].</li>
-      <li><strong>Available for Output:</strong> Lets the calling process access values calculated or updated within the subflow[cite: 4].</li>
-    </ul>
-    <div class="code-block">
-      <div class="code-block-header"><span>Variable Config</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Variable API Name: recordId
-Data Type: Text
-Type Configuration:
-  [X] Available for input
-  [ ] Available for output</pre>
-    </div>
-  </div>
+      <!-- ===================== TOC ===================== -->
+      <aside class="toc" id="toc">
+        <div class="t-label">On this page</div>
+        <div id="tocLinks"></div>
+      </aside>
+    </div><!-- /.page -->
 
-  <div class="card" id="card-7-3">
-    <h3>Modular Calculation Pattern</h3>
-    <p>Instead of copying the same complex logic into multiple flows, build it once as a reusable Autolaunched Flow and call it whenever needed[cite: 4].</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>Reusable Discount Subflow</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Inputs:
-  - TotalAmount (Decimal)
-  - DiscountPercent (Decimal)
-Logic:
-  - Formula: {!TotalAmount} - ({!TotalAmount} * {!DiscountPercent} / 100)
-Outputs:
-  - DiscountedAmount (Decimal)</pre>
-    </div>
-  </div>
-
-  <div class="card" id="card-7-4" style="border-color: var(--accent);">
-    <h3>Exercise 1: Account Rating Calculator</h3>
-    <p>Create an Autolaunched Flow that accepts an Account ID as an input variable[cite: 4]. It must query and count the related Opportunities[cite: 4]. Update the Account Rating: **Hot** (more than 5 Opportunities), **Warm** (2–5), or **Cold** (less than 2)[cite: 4]. Run this as a subflow from an Account Record-Triggered Flow[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-7-5" style="border-color: var(--accent);">
-    <h3>Exercise 2: Automated Task Generation</h3>
-    <p>Create an Autolaunched Flow that accepts <code>RecordId</code> and <code>DueInDays</code> as input parameters[cite: 4]. It must create a Task with: Subject = "Follow Up", Related To = RecordId, and Due Date = Today + DueInDays[cite: 4]. Return the newly generated Task ID as an output variable[cite: 4].</p>
-  </div>
-</section>
-
-<!-- ─── S-8: SCHEDULED FLOWS ─── -->
-<section class="section" id="s-8">
-  <div class="module-header">
-    <div class="module-number">8</div>
-    <div class="module-title">Scheduled Flows</div>
-    <div class="module-subtitle">Recurrent execution, daily/weekly tasks, and batch queries</div>
-  </div>
-
-  <div class="card" id="card-8-1">
-    <h3>Batch Engine on Flow</h3>
-    <p>Scheduled Flows let you query the database and update records on a set schedule (daily, weekly, or once)[cite: 4].</p>
-    <ul>
-      <li><strong>No Apex Needed:</strong> Replaces legacy scheduled Apex batch classes.</li>
-      <li><strong>Batch Processing:</strong> Salesforce automatically batches the query results and processes up to 200 records per batch.</li>
-      <li><strong>Query Filters:</strong> Filter records directly in the Start element to query only the data that needs processing[cite: 4].</li>
-    </ul>
-  </div>
-
-  <div class="card" id="card-8-2">
-    <h3>Start Element Filter Best Practices</h3>
-    <div class="compare-grid">
-      <div class="compare-col">
-        <div class="compare-col-header after">Correct Setup (Start Element Filters)</div>
-        <pre>Start Element:
-  Object: Lead
-  Criteria: Status = "Working - Contacted"
-  CreatedDate &lt; $Flow.CurrentDate - 90
-// Saves resources: runs only on matching records</pre>
-      </div>
-      <div class="compare-col">
-        <div class="compare-col-header before">Incorrect Setup (Get Records inside Flow)</div>
-        <pre>Start Element:
-  No Object Filter (Runs on all records)
-Flow Body:
-  Get Records (Find leads older than 90 days)
-// Inefficient: queries all leads in the org</pre>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" id="card-8-3">
-    <h3>Configuration Example</h3>
-    <div class="code-block">
-      <div class="code-block-header"><span>Scheduled Weekly Update</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>Start Element:
-  Frequency: Weekly
-  Start Date: 2026-07-15
-  Start Time: 01:00 AM
-  Object: Lead
-  Conditions: Status = "Working - Contacted"</pre>
-    </div>
-  </div>
-
-  <div class="card" id="card-8-4" style="border-color: var(--accent);">
-    <h3>Exercise 1: Birthday Greetings</h3>
-    <p>Create a Scheduled Flow that runs daily[cite: 4]. It must scan for **Contacts** whose Birthdate matches today's date, and automatically email them a birthday greeting[cite: 4].</p>
-  </div>
-
-  <div class="card" id="card-8-5" style="border-color: var(--accent);">
-    <h3>Exercise 2: Archive Inactive Leads</h3>
-    <p>Create a Scheduled Flow that runs weekly[cite: 4]. Find all **Leads** with Status "Working - Contacted" that are older than 90 days, and update their status to "Closed - Converted"[cite: 4].</p>
-  </div>
-</section>
-
-<!-- ─── S-9: DEBUGGING & ERRORS ─── -->
-<section class="section" id="s-9">
-  <div class="module-header">
-    <div class="module-number">9</div>
-    <div class="module-title">Debugging &amp; Troubleshooting</div>
-    <div class="module-subtitle">Flow Debugger, rollback behavior, and handling execution errors</div>
-  </div>
-
-  <div class="card" id="card-9-1">
-    <h3>Using the Flow Debugger</h3>
-    <p>The Flow Debugger is your primary tool for troubleshooting and testing flows before activating them.</p>
-    <ul>
-      <li><strong>Run in Rollback Mode:</strong> Test your flow without saving any changes to the database[cite: 4].</li>
-      <li><strong>View Execution Path:</strong> Watch step-by-step as the flow processes data and changes variables.</li>
-      <li><strong>Test as Another User:</strong> Debug the flow using the permissions of a specific user profile to check security and access.</li>
-    </ul>
-  </div>
-
-  <div class="card" id="card-9-2">
-    <h3>Handling Error Emails</h3>
-    <p>When a flow fails in production, Salesforce sends an error email containing detailed diagnostics to the administrator.</p>
-    <div class="code-block">
-      <div class="code-block-header"><span>Typical Error Log</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre>An error occurred at element "Update_Account_Rating".
-Caused by: System.DmlException: Update failed. 
-First exception on row 0 with id 001xx000003ABCDE; 
-FIELD_CUSTOM_VALIDATION_EXCEPTION, Rating must be validated before save: [Rating]</pre>
-    </div>
-    <div class="note">This error indicates that your flow update was blocked by a Validation Rule[cite: 4]. Always coordinate Validation Rules and Flows to prevent conflicts[cite: 4].</div>
-  </div>
-
-  <div class="card" id="card-9-3">
-    <h3>Common Automation Mistakes</h3>
-    <ul>
-      <li><strong>Mixing Fast Updates &amp; Actions:</strong> Trying to update related records in a Fast Field Update flow (Before-Save).</li>
-      <li><strong>Infinite Loops:</strong> A Record-Triggered Flow updating its own fields, causing the flow to trigger itself recursively.</li>
-      <li><strong>Hardcoding Record IDs:</strong> Using hardcoded ID strings (e.g., <code>001xx000003ABCDE</code>) instead of querying for records dynamically.</li>
-      <li><strong>DML inside Loops:</strong> Placing Create or Update elements inside a loop. Always use assignments to add records to a collection variable first, then perform the database update outside the loop[cite: 4].</li>
-    </ul>
-    <button class="try-it-btn" onclick="openPlayground(this, `// Bad: DML operations inside loops (simulated)\nconsole.log('--- Bad Pattern ---');\nfor (let i = 0; i < 3; i++) {\n  console.log('Executing database DML query on iteration ' + i + ' (wasteful, hits limits!)');\n}\n\n// Good: Collect first, then batch update outside the loop\nconsole.log('\\n--- Good Pattern ---');\nlet batchToUpdate = [];\nfor (let i = 0; i < 3; i++) {\n  batchToUpdate.push({ Id: i, Name: 'Update Name ' + i });\n}\nconsole.log('Successfully completed batch update of ' + batchToUpdate.length + ' records in a single operation.');`)">&#9654; Try It</button>
-  </div>
-</section>
-
-<!-- ─── S-10: ARCHITECTURAL FRAMEWORKS ─── -->
-<section class="section" id="s-10">
-  <div class="module-header">
-    <div class="module-number">10</div>
-    <div class="module-title">Architectural Best Practices</div>
-    <div class="module-subtitle">Designing clean, scalable, and easy-to-maintain automations</div>
-  </div>
-
-  <div class="card" id="card-10-1">
-    <h3>Design Principles</h3>
-    <p>Follow these design guidelines to build reliable Salesforce automations that remain easy to maintain as your business scales[cite: 4].</p>
-    <ul>
-      <li><strong>One Flow Per Object, Per Trigger Type:</strong> Use a single flow wrapper to manage all actions on an object, or use <strong>Flow Trigger Explorer</strong> to set execution order.</li>
-      <li><strong>Use Subflows for Common Logic:</strong> Build reusable processes as Autolaunched Flows and call them as subflows from parent flows[cite: 4].</li>
-      <li><strong>Build with Rollbacks in Mind:</strong> Ensure your flows fail gracefully, and use Fault Paths to log error details to custom objects when database transactions fail.</li>
-    </ul>
-  </div>
-
-  <div class="card" id="card-10-2">
-    <h3>When to Use Code</h3>
-    <table class="info-table">
-      <tr><th>Requirement</th><th>Declarative (Flow)</th><th>Programmatic (Apex)</th></tr>
-      <tr><td>Standard record updates</td><td>✓ Best Practice</td><td>Too complex, high overhead</td></tr>
-      <tr><td>Step-by-step user wizards</td><td>✓ Best Practice (Screen Flow)</td><td>Requires custom LWC development</td></tr>
-      <tr><td>Processing large batches (&gt;10,000 records)</td><td>Prone to timeout errors</td><td>✓ Best Practice (Batch Apex)</td></tr>
-      <tr><td>Integrating with complex custom REST APIs</td><td>Can be difficult to maintain</td><td>✓ Best Practice (Apex Class)</td></tr>
-    </table>
-  </div>
-
-  <div class="card" id="card-10-3">
-    <h3>Key Takeaways</h3>
-    <ul>
-      <li>Use **Before-Save** flows to update fields on the record that triggered the flow. It is 10 times faster than After-Save updates.</li>
-      <li>Pass data up from a subflow by setting the variable configuration to **Available for Output**[cite: 4].</li>
-      <li>Always use **Start Element Filters** on Scheduled Flows to query only the records you need to process[cite: 4].</li>
-      <li>Never place Get Records or Update elements inside loops — process records in batches instead[cite: 4].</li>
-    </ul>
-  </div>
-</section>
-
-<!-- ─── S-11: THANK YOU ─── -->
-<section class="section" id="s-11" style="display:flex;flex-direction:column;justify-content:center;align-items:center;">
-  <div class="ty-title">Thank You</div>
-  <div class="ty-sub">Need help with Salesforce automations? Get in touch with our team[cite: 4]</div>
-  <div class="ty-grid">
-    <a class="ty-card" href="mailto:info@spoonconsulting.com">
-      <div class="ty-card-photo-wrap">
-        <div class="ty-card-avatar" id="avatar-ashutosh">
-          <span class="ty-avatar-initial" id="initial-ashutosh">S</span>
-        </div>
-      </div>
-      <div class="ty-card-name">Spoon Consulting</div>
-      <div class="ty-card-role">Customer Experience &amp; Architecture Group[cite: 4]</div>
-      <div class="ty-card-email">&#9993; CXTeam@spoonconsulting.com</div>
-    </a>
-    <a class="ty-card" href="mailto:info@spoonconsulting.com">
-      <div class="ty-card-photo-wrap">
-        <div class="ty-card-avatar" id="avatar-devesh">
-          <span class="ty-avatar-initial" id="initial-devesh">A</span>
-        </div>
-      </div>
-      <div class="ty-card-name">Ayman Rummun</div>
-      <div class="ty-card-role">Automation Training Lead &middot; Spoon Consulting[cite: 4]</div>
-      <div class="ty-card-email">&#9993; ayman.rummun@spoonconsulting.com</div>
-    </a>
-  </div>
-</section>
-
-</div><!-- /main -->
-
-<!-- ═══ PLAYGROUND PANEL ═══ -->
-<div id="playground-panel">
-  <div class="pg-header" id="pgHeader">
-    <span class="pg-header-title">&#9654; Playground</span>
-    <div class="pg-header-actions">
-      <button onclick="pgFullscreen()" title="Fullscreen">&#x26F6;</button>
-      <button onclick="closePlayground()" title="Close">&#x2715;</button>
-    </div>
-  </div>
-  <div class="pg-body">
-    <textarea id="pgCode" spellcheck="false"></textarea>
-    <div class="pg-output" id="pgOutput">(no output)</div>
-  </div>
-  <div class="pg-footer">
-    <button class="run-btn" onclick="runPlayground()">Run</button>
-    <button onclick="resetPlayground()">Reset</button>
-    <button onclick="copyPlayground()">Copy</button>
-  </div>
-  <div class="pg-resize" id="pgResize"></div>
+    <footer class="foot">
+      Salesforce Process Automation · Built for the <b>Spoon Consulting Newbies Bootcamp</b> · 2026 · Works fully offline.
+    </footer>
+  </main>
 </div>
 
-<script>
-// ═══ NAV DATA ═══
-const modules = [
-  { id: 0, label: 'Welcome', desc: 'Course overview and index Map' },
-  { id: 1, label: 'Introduction', desc: 'Syllabus and the Automation Spectrum' },
-  { id: 2, label: 'Validation Rules', desc: 'Logic, operators, and data validation' },
-  { id: 3, label: 'Screen Flows', desc: 'Forms, components, and wizard building' },
-  { id: 4, label: 'Record-Triggered Flows', desc: 'Before vs. After-Save execution context' },
-  { id: 5, label: 'Scheduled & Async Paths', desc: 'SLA queues and background processing' },
-  { id: 6, label: 'Execution Lifecycle', desc: 'Database save sequence' },
-  { id: 7, label: 'Autolaunched Flows', desc: 'Subflows, input and output variables' },
-  { id: 8, label: 'Scheduled Flows', desc: 'Running batch jobs on a schedule' },
-  { id: 9, label: 'Debugging & Errors', desc: 'Flow logs, diagnostic errors, and testing' },
-  { id: 10, label: 'Best Practices', desc: 'Designing reliable automations' },
-  { id: 11, label: 'Thank You', desc: 'Get in touch with our team' }
-];
-
-// ═══ SUBSECTION DATA ═══
-const subsections = {
-  1: [{id:'card-1-1',t:'Training Agenda'},{id:'card-1-2',t:'The Automation Spectrum'},{id:'card-1-3',t:'Architecture Overview'}],
-  2: [{id:'card-2-1',t:'Validation Rules'},{id:'card-2-2',t:'Common Patterns'},{id:'card-2-3',t:'Syntax Examples'},{id:'card-2-4',t:'Secure URLs Check'},{id:'card-2-5',t:'Exercise 1'},{id:'card-2-6',t:'Exercise 2'}],
-  3: [{id:'card-3-1',t:'Screen Flows'},{id:'card-3-2',t:'Core Components'},{id:'card-3-3',t:'Data Elements'},{id:'card-3-4',t:'Exercise 1'},{id:'card-3-5',t:'Exercise 2'}],
-  4: [{id:'card-4-1',t:'Record-Triggered Flows'},{id:'card-4-2',t:'Before vs After-Save'},{id:'card-4-3',t:'Trigger Configuration'},{id:'card-4-4',t:'Parent-Child Update'},{id:'card-4-5',t:'Exercise 1'},{id:'card-4-6',t:'Exercise 2'}],
-  5: [{id:'card-5-1',t:'Advanced Features'},{id:'card-5-2',t:'Scheduled Paths'},{id:'card-5-3',t:'Asynchronous Paths'},{id:'card-5-4',t:'Exercise 1'},{id:'card-5-5',t:'Exercise 2'}],
-  6: [{id:'card-6-1',t:'Save Order'},{id:'card-6-2',t:'Save Order Summary'},{id:'card-6-3',t:'Transactional Lifecycles'}],
-  7: [{id:'card-7-1',t:'Autolaunched Flows'},{id:'card-7-2',t:'Input/Output Variables'},{id:'card-7-3',t:'Modular Calculations'},{id:'card-7-4',t:'Exercise 1'},{id:'card-7-5',t:'Exercise 2'}],
-  8: [{id:'card-8-1',t:'Scheduled Flows'},{id:'card-8-2',t:'Start Filters'},{id:'card-8-3',t:'Schedule Configuration'},{id:'card-8-4',t:'Exercise 1'},{id:'card-8-5',t:'Exercise 2'}],
-  9: [{id:'card-9-1',t:'Flow Debugger'},{id:'card-9-2',t:'Error Handling'},{id:'card-9-3',t:'Common Mistakes'}],
-  10: [{id:'card-10-1',t:'Design Principles'},{id:'card-10-2',t:'When to Use Code'},{id:'card-10-3',t:'Key Takeaways'}],
-};
-
-// ═══ BUILD NAV ═══
-const navList = document.getElementById('navList');
-modules.forEach(m => {
-  const group = document.createElement('div');
-  group.className = 'nav-group';
-  const btn = document.createElement('button');
-  btn.className = 'nav-item';
-  btn.id = 'nav-' + m.id;
-  btn.innerHTML = '<span class="nav-badge">' + m.id + '</span><span>' + m.label + '</span>';
-  btn.onclick = () => {
-    goTo(m.id, btn);
-    document.querySelectorAll('.nav-group').forEach(g => { if (g !== group) g.classList.remove('expanded'); });
-    if (subsections[m.id]) group.classList.toggle('expanded');
-  };
-  group.appendChild(btn);
-  if (subsections[m.id]) {
-    const subsDiv = document.createElement('div');
-    subsDiv.className = 'nav-subs';
-    subsections[m.id].forEach(sub => {
-      const subBtn = document.createElement('button');
-      subBtn.className = 'nav-sub';
-      subBtn.textContent = sub.t;
-      subBtn.dataset.cardId = sub.id;
-      subBtn.onclick = (e) => {
-        e.stopPropagation();
-        const el = document.getElementById(sub.id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        document.querySelectorAll('.nav-sub').forEach(s => s.classList.remove('active-sub'));
-        subBtn.classList.add('active-sub');
-      };
-      subsDiv.appendChild(subBtn);
-    });
-    group.appendChild(subsDiv);
-  }
-  navList.appendChild(group);
-});
-
-// ═══ BUILD MODULE GRID ═══
-const moduleGrid = document.getElementById('moduleGrid');
-modules.slice(1, -1).forEach(m => {
-  const card = document.createElement('div');
-  card.className = 'module-card';
-  card.onclick = () => goTo(m.id);
-  card.innerHTML = '<div class="mc-num">' + m.id + '</div><div class="mc-title">' + m.label + '</div><div class="mc-desc">' + m.desc + '</div>';
-  moduleGrid.appendChild(card);
-});
-
-// ═══ NAVIGATION ═══
-function goTo(id, btn) {
-  document.getElementById('s-' + id).scrollIntoView({ behavior: 'smooth' });
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  else {
-    const navBtn = document.getElementById('nav-' + id);
-    if (navBtn) { document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); navBtn.classList.add('active'); }
-  }
-}
-
-// ═══ PROGRESS TRACKING ═══
-const visited = new Set(JSON.parse(localStorage.getItem('sf-automation-visited') || '[]'));
-const totalSections = modules.length;
-
-function updateProgress() {
-  const pct = Math.round((visited.size / totalSections) * 100);
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = visited.size + ' of ' + totalSections + ' completed';
-  localStorage.setItem('sf-automation-visited', JSON.stringify([...visited]));
-  visited.forEach(id => {
-    const navBtn = document.getElementById('nav-' + id);
-    if (navBtn) navBtn.classList.add('visited');
-  });
-}
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = parseInt(entry.target.id.replace('s-', ''));
-      visited.add(id);
-      updateProgress();
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      const navBtn = document.getElementById('nav-' + id);
-      if (navBtn) navBtn.classList.add('active');
-      document.querySelectorAll('.nav-group').forEach(g => g.classList.remove('expanded'));
-      if (navBtn && navBtn.parentElement) navBtn.parentElement.classList.add('expanded');
-    }
-  });
-}, { threshold: 0.3 });
-
-document.querySelectorAll('.section').forEach(s => observer.observe(s));
-
-const cardObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const cardId = entry.target.id;
-      document.querySelectorAll('.nav-sub').forEach(s => s.classList.remove('active-sub'));
-      const sub = document.querySelector('.nav-sub[data-card-id="' + cardId + '"]');
-      if (sub) sub.classList.add('active-sub');
-    }
-  });
-}, { threshold: 0.3, rootMargin: '-10% 0px -60% 0px' });
-
-document.querySelectorAll('.card[id^="card-"]').forEach(c => cardObserver.observe(c));
-updateProgress();
-
-// ═══ SIDEBAR ═══
-function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  sb.classList.toggle('collapsed');
-  localStorage.setItem('sf-automation-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'expanded');
-}
-if (localStorage.getItem('sf-automation-sidebar') === 'collapsed') {
-  document.getElementById('sidebar').classList.add('collapsed');
-}
-
-// ═══ FULLSCREEN ═══
-function toggleAppFullscreen() {
-  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-  if (!isFs) {
-    const el = document.documentElement;
-    (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
-  } else {
-    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-  }
-}
-document.addEventListener('fullscreenchange', () => {
-  document.getElementById('fsBtn').textContent = document.fullscreenElement ? '✖' : '⛶';
-});
-
-// ═══ COPY CODE ═══
-function copyCode(btn) {
-  const pre = btn.closest('.code-block').querySelector('pre');
-  navigator.clipboard.writeText(pre.textContent).then(() => {
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 1500);
-  });
-}
-
-// ═══ SYNTAX HIGHLIGHTING ═══
-function highlightJS(raw) {
-  var code = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-  function freeText(str, fn) {
-    var out = [];
-    var i = 0;
-    while (i < str.length) {
-      var s = str.indexOf('<span', i);
-      if (s === -1) { out.push(fn(str.slice(i))); break; }
-      if (s > i) out.push(fn(str.slice(i, s)));
-      var depth = 1, j = s + 5;
-      while (j < str.length && depth > 0) {
-        if (str.startsWith('<span', j)) { depth++; j += 5; }
-        else if (str.startsWith('</span>', j)) { depth--; if (!depth) break; j += 7; }
-        else j++;
-      }
-      var end = j + 7;
-      out.push(str.slice(s, end));
-      i = end;
-    }
-    return out.join('');
-  }
-
-  code = code.replace(/`(?:[^`\\]|\\.|\$\{[^}]*\})*`/g, function(m) {
-    var inner = m.slice(1,-1).replace(/\$\{([^}]*)\}/g,
-      function(_, e) { return '<span style="color:#aab8c8">${</span>' + e + '<span style="color:#aab8c8">}</span>'; });
-    return '<span class="str">`' + inner + '`</span>';
-  });
-  code = code.replace(/"(?:[^"\\]|\\.)*"/g, function(m) { return '<span class="str">' + m + '</span>'; });
-  code = code.replace(/'(?:[^'\\]|\\.)*'/g, function(m) { return '<span class="str">' + m + '</span>'; });
-  code = code.replace(/\/\/[^\n]*/g, function(m) { return '<span class="cmt">' + m + '</span>'; });
-  code = code.replace(/\/\*[\s\S]*?\*\//g, function(m) { return '<span class="cmt">' + m + '</span>'; });
-
-  var KW = ['const','let','var','function','return','if','else','for','while',
-    'do','switch','case','break','continue','class','extends','super','new',
-    'this','typeof','instanceof','import','export','default','async','await',
-    'try','catch','finally','throw','of','in','from','static','get','set',
-    'AND', 'OR', 'NOT', 'ISPICKVAL', 'ISBLANK', 'NOT', 'BEGINS', 'TRUE', 'FALSE'];
-  var kwRe = new RegExp('\\b(' + KW.join('|') + ')\\b', 'g');
-
-  code = freeText(code, function(s) { return s.replace(/\b(\d+\.?\d*)\b/g, '<span class="num">$1</span>'); });
-  code = freeText(code, function(s) { return s.replace(kwRe, '<span class="kw">$1</span>'); });
-  code = freeText(code, function(s) { return s.replace(/\b(true|false|null|undefined|NaN|Infinity)\b/g, '<span class="bool">$1</span>'); });
-  code = freeText(code, function(s) { return s.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g,
-    function(m, n) { return (KW.indexOf(n)>=0 || ['true','false','null','undefined'].indexOf(n)>=0) ? m : '<span class="fn">' + n + '</span>'; }); });
-  code = freeText(code, function(s) { return s.replace(/\.([a-zA-Z_$][a-zA-Z0-9_$]*)\b(?!\s*\()/g, '.<span class="prop">$1</span>'); });
-  code = freeText(code, function(s) { return s.replace(/=&gt;/g, '<span class="op">=&gt;</span>'); });
-  code = freeText(code, function(s) { return s.replace(/([{}])/g, '<span class="punc">$1</span>'); });
-
-  return code;
-}
-
-function applyHighlighting() {
-  document.querySelectorAll('.code-block pre, .compare-col pre').forEach(function(pre) {
-    if (pre.querySelector('span')) return;
-    pre.innerHTML = highlightJS(pre.textContent);
-  });
-}
-
-// ═══ PLAYGROUND ═══
-var pgOriginalCode = '';
-
-function captureAndRun(code, outputEl) {
-  var logs = [];
-  var origLog = console.log;
-  var origWarn = console.warn;
-  var origError = console.error;
-  console.log = function() { var a = Array.from(arguments); logs.push(a.map(String).join(' ')); origLog.apply(console, a); };
-  console.warn = function() { var a = Array.from(arguments); logs.push('⚠ ' + a.map(String).join(' ')); origWarn.apply(console, a); };
-  console.error = function() { var a = Array.from(arguments); logs.push('✖ ' + a.map(String).join(' ')); origError.apply(console, a); };
-  try {
-    var result = new Function(code)();
-    if (result !== undefined) logs.push('→ ' + String(result));
-  } catch(e) {
-    logs.push('✖ ' + e.message);
-  } finally {
-    console.log = origLog;
-    console.warn = origWarn;
-    console.error = origError;
-  }
-  outputEl.textContent = logs.length ? logs.join('\n') : '(no output)';
-}
-
-function openPlayground(btn, code) {
-  var panel = document.getElementById('playground-panel');
-  var textarea = document.getElementById('pgCode');
-  var output = document.getElementById('pgOutput');
-  var tmp = document.createElement('textarea');
-  tmp.innerHTML = code;
-  var decoded = tmp.value;
-  pgOriginalCode = decoded;
-  textarea.value = decoded;
-  output.textContent = '(no output)';
-  panel.classList.add('visible');
-}
-
-function closePlayground() {
-  document.getElementById('playground-panel').classList.remove('visible');
-}
-
-function runPlayground() {
-  captureAndRun(document.getElementById('pgCode').value, document.getElementById('pgOutput'));
-}
-
-function resetPlayground() {
-  document.getElementById('pgCode').value = pgOriginalCode;
-  document.getElementById('pgOutput').textContent = '(no output)';
-}
-
-function copyPlayground() {
-  navigator.clipboard.writeText(document.getElementById('pgCode').value);
-}
-
-function pgFullscreen() {
-  var panel = document.getElementById('playground-panel');
-  if (!document.fullscreenElement) { panel.requestFullscreen(); }
-  else { document.exitFullscreen(); }
-}
-
-// ═══ DRAG PLAYGROUND ═══
-(function() {
-  var header = document.getElementById('pgHeader');
-  var panel = document.getElementById('playground-panel');
-  var dragging = false, ox, oy;
-  header.addEventListener('mousedown', function(e) {
-    if (e.target.tagName === 'BUTTON') return;
-    dragging = true;
-    var rect = panel.getBoundingClientRect();
-    ox = e.clientX - rect.left;
-    oy = e.clientY - rect.top;
-    panel.style.transform = 'none';
-    panel.style.left = rect.left + 'px';
-    panel.style.top = rect.top + 'px';
-  });
-  document.addEventListener('mousemove', function(e) {
-    if (!dragging) return;
-    panel.style.left = (e.clientX - ox) + 'px';
-    panel.style.top = (e.clientY - oy) + 'px';
-  });
-  document.addEventListener('mouseup', function() { dragging = false; });
-})();
-
-// ═══ RESIZE PLAYGROUND ═══
-(function() {
-  var handle = document.getElementById('pgResize');
-  var panel = document.getElementById('playground-panel');
-  var resizing = false;
-  handle.addEventListener('mousedown', function(e) { resizing = true; e.preventDefault(); });
-  document.addEventListener('mousemove', function(e) {
-    if (!resizing) return;
-    var rect = panel.getBoundingClientRect();
-    panel.style.width = Math.max(360, e.clientX - rect.left) + 'px';
-    panel.style.height = Math.max(280, e.clientY - rect.top) + 'px';
-  });
-  document.addEventListener('mouseup', function() { resizing = false; });
-})();
-
-// ═══ VALIDATION ORDER ANIMATION ═══
-function startBubbleAnim() {
-  var runsValidation = document.getElementById('opt-bubbles').checked;
-  var runsFlows = document.getElementById('opt-composed').checked;
-  var log = document.getElementById('bubble-log');
-  var nodes = ['bn-button', 'bn-item', 'bn-list', 'bn-app'];
-
-  nodes.forEach(function(id) {
-    document.getElementById(id).classList.remove('glow', 'glow-stop');
-  });
-  log.textContent = '';
-
-  var step = 0;
-  var messages = [];
-
-  function next() {
-    if (step >= nodes.length) return;
-    var nodeId = nodes[step];
-    var el = document.getElementById(nodeId);
-
-    if (step === 0) {
-      if (!runsValidation) {
-        messages.push('Skipping Validation rules evaluations...');
-        el.classList.add('glow-stop');
-        log.textContent = messages.join('\n');
-        step++;
-        setTimeout(next, 700);
-      } else {
-        el.classList.add('glow');
-        messages.push('Phase 1: Validating fields and executing logical Validation rules criteria...');
-        log.textContent = messages.join('\n');
-        step++;
-        setTimeout(next, 700);
-      }
-    } else if (step === 1) {
-      if (!runsFlows) {
-        messages.push('Phase 2: Before-save triggers skipped (Option inactive).');
-        el.classList.add('glow-stop');
-        log.textContent = messages.join('\n');
-        step++;
-        setTimeout(next, 700);
-      } else {
-        el.classList.add('glow');
-        messages.push('Phase 2: Executing Before-Save record modifications (Fast field updates).');
-        log.textContent = messages.join('\n');
-        step++;
-        setTimeout(next, 700);
-      }
-    } else if (step === 2) {
-      el.classList.add('glow');
-      messages.push('Phase 3: Running After-Save logic, automation flows, and workflows.');
-      log.textContent = messages.join('\n');
-      step++;
-      setTimeout(next, 700);
-    } else if (step === 3) {
-      el.classList.add('glow');
-      messages.push('Phase 4: Save Operation complete. Database changes successfully committed.');
-      log.textContent = messages.join('\n');
-      step++;
-    }
-  }
-  next();
-}
-
-// ═══ RECORD TRIGGER ANIMATION ═══
-var flowLifeCycleData = {
-  1: { name: 'Case Closed Update', email: 'DML Action: Closed Case', phone: 'Flow updates Account.Last_Case_Closed_Date__c' },
-  2: { name: 'Opportunity Stage Won', email: 'DML Action: Close-Won', phone: 'Flow updates related Line Items and recalculates totals' },
-  3: { name: 'Lead Created Verification', email: 'DML Action: Insert Lead', phone: 'System validates fields and runs validation rules' }
-};
-
-function composeClick(id) {
-  var log = document.getElementById('compose-log');
-  var detail = document.getElementById('detail-content');
-  var arrowUp = document.getElementById('arrow-up');
-  var arrowDown = document.getElementById('arrow-down');
-  var listComp = document.getElementById('comp-list');
-  var detailComp = document.getElementById('comp-detail');
-
-  document.querySelectorAll('.compose-item').forEach(function(el) { el.classList.remove('selected'); });
-  document.getElementById('ci-' + id).classList.add('selected');
-
-  arrowUp.classList.add('show');
-  listComp.classList.remove('flash');
-  void listComp.offsetWidth;
-  listComp.classList.add('flash');
-  log.textContent = '1. Record Update event captured on the database layer: ' + flowLifeCycleData[id].name;
-
-  setTimeout(function() {
-    log.textContent += '\n2. Salesforce analyzes matching active Record-Triggered Flows...';
-    log.textContent += '\n3. Transitioning execution context into transactional memory space.';
-
-    setTimeout(function() {
-      arrowDown.classList.add('show');
-      detailComp.classList.remove('flash');
-      void detailComp.offsetWidth;
-      detailComp.classList.add('flash');
-
-      var c = flowLifeCycleData[id];
-      detail.innerHTML = '<div class="compose-detail-info"><div class="cdi-name">' + c.name + '</div><div class="cdi-email">' + c.email + '</div><div class="cdi-phone">' + c.phone + '</div></div>';
-      log.textContent += '\n4. Actions complete. Database save finalized!';
-    }, 500);
-  }, 600);
-}
-
-function startComposeAnim() {
-  composeClick(1);
-  setTimeout(function() { composeClick(2); }, 2500);
-  setTimeout(function() { composeClick(3); }, 5000);
-}
-
-function resetComposeAnim() {
-  document.querySelectorAll('.compose-item').forEach(function(el) { el.classList.remove('selected'); });
-  document.getElementById('arrow-up').classList.remove('show');
-  document.getElementById('arrow-down').classList.remove('show');
-  document.getElementById('detail-content').innerHTML = '<div class="compose-detail-placeholder">Initialize Triggering Event</div>';
-  document.getElementById('compose-log').textContent = 'Select an event on the left to see the lifecycle execution log';
-}
-
-// ═══ KEYBOARD ═══
-document.addEventListener('keydown', function(e) {
-  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
-  if (e.key === 'ArrowRight') {
-    var active = document.querySelector('.nav-item.active');
-    var idx = active ? parseInt(active.id.replace('nav-', '')) : -1;
-    if (idx < modules.length - 1) goTo(idx + 1);
-  } else if (e.key === 'ArrowLeft') {
-    var active = document.querySelector('.nav-item.active');
-    var idx = active ? parseInt(active.id.replace('nav-', '')) : 1;
-    if (idx > 0) goTo(idx - 1);
-  } else if (e.key === 'f' || e.key === 'F') {
-    toggleAppFullscreen();
-  } else if (e.key === 'Escape') {
-    closePlayground();
-  }
-});
-
-// ═══ INIT ═══
-document.addEventListener('DOMContentLoaded', function() {
-  applyHighlighting();
-});
-</script>
+<script src="script.js"></script>
 </body>
 </html>
