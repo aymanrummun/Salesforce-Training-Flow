@@ -253,7 +253,7 @@ const OOE = [
   {t:'Overwrite old values with the new field values'},
   {t:'Flow: Before-Save updates run', key:true},
   {t:'Before Apex triggers run'},
-  {t:'Validation rules run', key:true},
+  {t:'Validation rules run: ', key:true},
   {t:'Duplicate rules run'},
   {t:'Record saved to the database (not yet committed)'},
   {t:'After Apex triggers run'},

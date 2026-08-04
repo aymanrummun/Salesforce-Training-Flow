@@ -15,9 +15,12 @@
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
   <a class="brand" href="#overview">
-    <span class="mark">
+    <!-- <span class="mark">
       <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><text x="4.5" y="16" font-family="system-ui" font-size="10" font-weight="800" fill="#0c2a35">sp</text><circle cx="15.5" cy="9.5" r="2" fill="#ef7a52"/><text x="13" y="16" font-family="system-ui" font-size="10" font-weight="800" fill="#0c2a35">n</text></svg>
-    </span>
+    </span> -->
+    <img src="https://pd.sharinpix.com/3/3c74760/c2NwaXguaGVyb2t1YXBwLmNvbS9pbWFnZXMvY2M1MmNiNDUtYzBhMS00NjJjLThjYzEtMTAxMDg5OTA0YzJlL3RodW1ibmFpbHMvb3JpZ2luYWwtN2ZlMGYyNWZmZGUuanBn/logo.jpeg?dl=0" height="40px" width="40px">
+    <!--<img src="https://pd.sharinpix.com/3/32e3f6c/c2NwaXguaGVyb2t1YXBwLmNvbS9pbWFnZXMvZGE2N2JmMTgtNGY2ZC00NmVkLWIxY2ItZjllYmQwZTVmYzYzL3RodW1ibmFpbHMvb3JpZ2luYWwtMzVhMGU4MjUzY2IuanBn/salesforce-logo.webp?dl=0" height="55px" width="80px">-->
+
     <span><b>Process Automation</b><small>Spoon Consulting · Bootcamp</small></span>
   </a>
   <div class="search">
@@ -51,7 +54,7 @@
         <section id="overview" class="section hero" data-nav="Overview" data-group="Get started">
           <div class="eyebrow"><span class="n">Salesforce Track</span> Newbies Bootcamp · 2026</div>
           <h1>Automate Salesforce, <span class="grad">without writing code.</span></h1>
-          <p class="lede">A complete, hands-on guide to <b>Process Automation</b> — from the formulas and validation rules that protect your data, to every type of <b>Flow</b>. Written for people who have never opened Salesforce.</p>
+          <p class="lede">A complete, hands-on guide to <b>Process Automation</b> — from the formulas and validation rules that protect your data, to every type of <b>Flow</b>.</p>
           <div class="hero-cta">
             <a class="btn primary" href="#foundations">Start from zero →</a>
             <a class="btn ghost" href="#choosing">Jump to "which automation?"</a>
@@ -74,9 +77,9 @@
 
           <div class="stat-row">
             <div class="stat"><div class="num">3</div><div class="lab">days · 20 hours</div></div>
-            <div class="stat"><div class="num">5</div><div class="lab">types of Flow</div></div>
+            <div class="stat"><div class="num">4</div><div class="lab">types of Flow</div></div>
             <div class="stat"><div class="num">0</div><div class="lab">lines of code required</div></div>
-            <div class="stat"><div class="num">Dec '25</div><div class="lab">Workflow &amp; Process Builder retired</div></div>
+            <!-- <div class="stat"><div class="num">Dec '25</div><div class="lab">Workflow &amp; Process Builder retired</div></div> -->
           </div>
 
           <div class="callout info"><span class="ci">🎯</span><p><b>How to use this guide.</b> A trainer can present straight from these pages, or you can explore on your own. Click the diagrams, run the mini-simulators, expand the <b>Trainer notes</b>, and test yourself with the knowledge checks. Your progress fills the bar in the sidebar.</p></div>
@@ -219,6 +222,17 @@ IF( ISBLANK(JobTemplate__c), "Missing Template",
           <h3>The golden rule for messages</h3>
           <div class="callout tip"><span class="ci">💬</span><p>The best validation message tells the user <b>exactly how to fix the record</b>. "Invalid data" is useless; "Choose or create a named Job Template before assigning this job" is a fix.</p></div>
 
+          <div class="callout tip">
+            <span class="ci">📛</span>
+            <p>
+              <b>Naming convention.</b> </br>
+              <b>Validation Rules:</b> Use Natural Text to state expected conditions (e.g., <code>Street Address &lt; 60 chars</code>, <code>Occupation Required</code>).<br/>
+              • Avoid superfluous words like <i>"Validate"</i>.<br/>
+              • Always include a description and set the error location to the specific field if applicable.<br/>
+              • Indent formula logic properly and use shorter functions (e.g., <code>BLANKVALUE</code> instead of <code>IF</code> / <code>CASE</code>).
+            </p>
+          </div>
+
           <details class="acc">
             <summary><span class="tn">Trainer note</span> When a new rule breaks Apex tests <span class="chev">›</span></summary>
             <div class="acc-body"><p>A new validation rule often breaks existing Apex tests because the test data no longer represents a savable record. Ask learners: <i>what test data must change?</i> This is the moment they feel how validation touches every path, not just the UI.</p></div>
@@ -290,6 +304,19 @@ IF( ISBLANK(JobTemplate__c), "Missing Template",
           <div class="pel-detail" id="palDetail"><h4>Pick an element</h4><div class="row">Click any element above to learn its purpose, typical usage, best practice, and common mistake.</div></div>
 
           <div class="callout info"><span class="ci">📖</span><p><b>Vocabulary.</b> An <b>element</b> is one step in a flow (Screen, Decision, Get Records…). A <b>resource</b> is a value the flow uses (variable, formula, constant, record, collection). <code>recordId</code> is a common input variable that receives the current record's Id from a Lightning page.</p></div>
+        
+        <div class="callout tip">
+            <span class="ci">📛</span>
+            <p>
+              <b>Naming convention.</b> </br>
+              <b>Screen Flow:</b> <code>[Domain] - SCR - [Short Description]</code> | API Name: <code>[Domain]_SCR_[Short Description]</code><br/>
+              <b>Triggered Flow:</b> <code>[Domain] - TRIG - [Short Description]</code> | API Name: <code>[Domain]_TRIG_[Short Description]</code><br/>
+              <b>Autolaunched Flow:</b> <code>[Domain] - [Short Description]</code> | API Name: <code>[Domain]_[Short Description]</code><br/>
+              <b>Scheduled Flow:</b> <code>[Domain] - SCH - [Short Description]</code> | API Name: <code>[Domain]_SCH_[Short Description]</code><br/>
+              <b>Platform Event Flow:</b> <code>[Domain] - EVT - [Short Description]</code> | API Name: <code>[Domain]_EVT_[Short Description]</code><br/>
+              <small><i>Note: Domain corresponds to a functional domain or object name (only if the flow involves a single object).</i></small>
+            </p>
+          </div>
         </section>
 
         <!-- ========================= SCREEN FLOWS ========================= -->
@@ -362,7 +389,7 @@ IF( ISBLANK(JobTemplate__c), "Missing Template",
 
         <!-- ========================= RECORD-TRIGGERED ========================= -->
         <section id="record-triggered" class="section" data-nav="Record-triggered flows" data-group="Flow">
-          <div class="eyebrow"><span class="n">Flow · Interactive</span> Automation on save</div>
+          <div class="eyebrow"><span class="n">Flow · Automated</span> Automation on save</div>
           <h2>Record-triggered flows</h2>
           <p class="lede">Automatically perform actions in the background based on Create, Update, or Delete events — the modern replacement for Workflow and Process Builder.</p>
 
@@ -545,7 +572,7 @@ Value:     "AccBeforeInsertUpdate"</pre></div>
             <div class="card"><h4>Recursion</h4><p>An automation that updates its own trigger record can re-fire the cycle. Tight entry criteria and "only when changed" conditions prevent loops.</p></div>
           </div>
 
-          <div class="callout tip"><span class="ci">📛</span><p><b>Naming convention.</b> Record-triggered flows: <code>XXX - «Business Process»</code> where XXX abbreviates the triggering object. Consistent names make the Flow Trigger Explorer readable at a glance.</p></div>
+          <!-- <div class="callout tip"><span class="ci">📛</span><p><b>Naming convention.</b> Record-triggered flows: <code>XXX - «Business Process»</code> where XXX abbreviates the triggering object. Consistent names make the Flow Trigger Explorer readable at a glance.</p></div> -->
         </section>
 
         <!-- ========================= KNOWLEDGE CHECK ========================= -->
