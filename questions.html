@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Practice Questions — Process Automation</title>
+  <meta name="description" content="Salesforce Automation Practice Workshop questions and MCQs."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* Minor layout tweaks for the standalone questions page */
+    .questions-layout {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+    .mcq-opts {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mcq-opt {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      font-size: 14px;
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <!-- <span class="mark">
+      <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><text x="4.5" y="16" font-family="system-ui" font-size="10" font-weight="800" fill="#0c2a35">sp</text><circle cx="15.5" cy="9.5" r="2" fill="#ef7a52"/><text x="13" y="16" font-family="system-ui" font-size="10" font-weight="800" fill="#0c2a35">n</text></svg>
+    </span> -->
+    <img src="https://pd.sharinpix.com/3/32e3f6c/c2NwaXguaGVyb2t1YXBwLmNvbS9pbWFnZXMvZGE2N2JmMTgtNGY2ZC00NmVkLWIxY2ItZjllYmQwZTVmYzYzL3RodW1ibmFpbHMvb3JpZ2luYWwtMzVhMGU4MjUzY2IuanBn/salesforce-logo.webp?dl=0" height="55px" width="85px">
+
+    <span><b>Process Automation</b><small>Practice Questions</small></span>
+  </a>
+  <div class="search">
+    <a href="index.html" class="btn ghost" style="padding: 6px 12px; font-size: 13px;">← Back to Guide</a>
+  </div>
+</header>
+
+<main class="main questions-layout">
+  
+  <section class="section hero" style="padding-top: 0;">
+    <div class="eyebrow"><span class="n">Salesforce Track</span> Workshop</div>
+    <h1>Automation &amp; Formulas <span class="grad">Practice</span></h1>
+    <p class="lede"><b>Target Audience:</b> Salesforce Administrators / Junior Developers<br/>
+    <b>Topic:</b> Validation Rules, Screen Flows, Record-Triggered Flows, Autolaunched Flows, Scheduled Flows, and Complex Case Automation.</p>
+  </section>
+
+  <!-- SECTION 1 -->
+  <section class="section">
+    <div class="eyebrow"><span class="n">Section 1</span> Validation Rules</div>
+    <h2>🛠️ Validation Rules</h2>
+    
+    <div class="callout tip"><span class="ci">📛</span><p><b>Best Practice Reminder:</b> Rules check if an expression evaluates to TRUE (which indicates an error condition). Keep rule names concise, avoid the word "Validate" in names, and always provide helpful error messages.</p></div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>Practice 1: Phone or Email Required</h4>
+        <p><b>Use Case:</b> Ensure leads have at least one valid method of contact (Phone or Email).</p>
+        <p><b>Target Object:</b> Lead</p>
+        <p><b>Task:</b> Create a Validation Rule that triggers if both Phone and Email are blank.</p>
+        <p><b>Error Message:</b> Please enter at least a phone number or an email address.</p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 2: Parent Record Check</h4>
+        <p><b>Use Case:</b> Validate parent Account details when a Contact with a Job Title is created or updated.</p>
+        <p><b>Target Object:</b> Contact</p>
+        <p><b>Task:</b> Prevent saving a Contact if the Contact's Title is populated BUT the parent Account.Industry is blank.</p>
+        <p><b>Error Location:</b> Field -> Account Name</p>
+        <p><b>Error Message:</b> Please specify the Account's Industry before adding this Contact.</p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 3: Secure Website Enforcer</h4>
+        <p><b>Use Case:</b> Standardize company web addresses across Accounts.</p>
+        <p><b>Target Object:</b> Account</p>
+        <p><b>Task:</b> Trigger an error if Website is populated but does not begin with https://.</p>
+        <p><b>Error Location:</b> Field -> Website</p>
+        <p><b>Error Message:</b> Website must start with https://</p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 4: Enterprise Account Revenue</h4>
+        <p><b>Use Case:</b> Enforce financial tracking on active prospects.</p>
+        <p><b>Target Object:</b> Account</p>
+        <p><b>Task:</b> Require AnnualRevenue whenever Type is set to Prospect.</p>
+        <p><b>Error Location:</b> Field -> Annual Revenue</p>
+        <p><b>Error Message:</b> Please enter Annual Revenue for Prospect accounts.</p>
+
+      </div>
+    </div>
+
+    <h3>💡 Insight Questions</h3>
+    <ul>
+      <li><b>Rule Evaluation:</b> Why does a Validation Rule formula evaluate to TRUE to throw an error instead of FALSE?</li>
+      <li><b>Cross-Object Validation:</b> Can a Validation Rule on the Account object prevent a user from creating a Contact if Account fields are incomplete? Why or why not?</li>
+      <li><b>Data Imports:</b> What happens to existing records if you activate a new Validation Rule and then run a Data Loader update?</li>
+    </ul>
+
+    <h3>📝 MCQ Assessment</h3>
+    <div class="grid g2">
+      <div class="card">
+        <p><b>Q1. You need to write a validation rule that ensures an Opportunity Has an Amount when the Stage is "Closed Won". Which formula correctly expresses this requirement?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) IF(ISPICKVAL(StageName, "Closed Won"), ISBLANK(Amount), FALSE)</div>
+          <div class="mcq-opt">B) AND(ISPICKVAL(StageName, "Closed Won"), ISBLANK(Amount))</div>
+          <div class="mcq-opt">C) OR(StageName = "Closed Won", Amount = 0)</div>
+          <div class="mcq-opt">D) NOT(AND(ISPICKVAL(StageName, "Closed Won"), NOT(ISBLANK(Amount))))</div>
+        </div>
+      </div>
+      <div class="card">
+        <p><b>Q2. What is the recommended naming convention for a Validation Rule?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Validate_Phone_And_Email_Format</div>
+          <div class="mcq-opt">B) CheckIfAddressIsValid</div>
+          <div class="mcq-opt">C) Street Address &lt; 60 chars</div>
+          <div class="mcq-opt">D) VR_ACCOUNT_001_VALIDATE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section">
+    <div class="eyebrow"><span class="n">Section 2</span> Screen Flows</div>
+    <h2>🖥️ Screen Flows (User Interactive)</h2>
+    
+    <div class="grid g2">
+      <div class="card">
+        <h4>Practice 1: Quick Contact Creator</h4>
+        <p><b>Scenario:</b> Enable sales reps to quickly log new contacts while in the field.</p>
+        <p><b>Steps &amp; Elements:</b></p>
+        <ul>
+          <li><b>Screen Element (Collect Contact Details):</b> Text Input (First Name), Text Input (Last Name - Required), Email Input, Lookup Input (Account Name).</li>
+          <li><b>Create Records Element:</b> Object: Contact. Map screen inputs directly to fields.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Practice 2: Bulk Opportunity Stage Manager</h4>
+        <p><b>Scenario:</b> Allow sales managers to update stages across multiple active opportunities.</p>
+        <p><b>Steps &amp; Elements:</b></p>
+        <ol>
+          <li><b>Get Records:</b> Object: Opportunity. Filter: StageName != Closed Won AND StageName != Closed Lost.</li>
+          <li><b>Screen Element:</b> Picklist (Select New Stage) and Data Table (Active Opportunities) with multi-row selection enabled.</li>
+          <li><b>Loop Element:</b> Iterate over <code>{!Active_Opportunities.selectedRows}</code>.</li>
+          <li><b>Assignment Element:</b> Set StageName = <code>{!Select_New_Stage}</code> and add to collection variable.</li>
+          <li><b>Update Records:</b> Update records from the collection variable.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h3>💡 Insight Questions</h3>
+    <ul>
+      <li><b>User Permissions:</b> What permission does a user need to run a Screen Flow?</li>
+      <li><b>Bulkification:</b> Why should you assign modified items inside a loop to a collection variable and call Update Records after the loop, rather than placing Update Records inside the loop?</li>
+    </ul>
+
+    <h3>📝 MCQ Assessment</h3>
+    <div class="grid g2">
+      <div class="card">
+        <p><b>Q3. A developer places a "Get Records" element inside a Loop element in a Screen Flow. What is the main risk of doing this?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Screen Flows do not support loops.</div>
+          <div class="mcq-opt">B) The flow may exceed the SOQL query governor limit of 100 queries.</div>
+          <div class="mcq-opt">C) The user interface will freeze completely.</div>
+          <div class="mcq-opt">D) Salesforce will automatically delete the records.</div>
+        </div>
+      </div>
+      <div class="card">
+        <p><b>Q4. What component in a Screen Flow allows you to display a multi-row selection list of records to the user?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Radio Buttons</div>
+          <div class="mcq-opt">B) Display Text</div>
+          <div class="mcq-opt">C) Data Table</div>
+          <div class="mcq-opt">D) Section Component</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="section">
+    <div class="eyebrow"><span class="n">Section 3</span> Record-Triggered Flows</div>
+    <h2>⚡ Record-Triggered Flows</h2>
+    
+    <div class="grid g2">
+      <div class="card">
+        <h4>Practice 1: Auto-Assign Account</h4>
+        <p><b>Scenario:</b> Automatically assign Healthcare opportunities to a central account.</p>
+        <ul>
+          <li><b>Object:</b> Opportunity | <b>Trigger:</b> Record is created | <b>Condition:</b> Industry__c Equals HealthCare</li>
+          <li><b>Get Records:</b> Find Account where Name = Health Trust.</li>
+          <li><b>Update Records:</b> Set <code>$Record.AccountId</code> = Get_Health_Trust_Account.Id.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Practice 2: Last Modified Tracking</h4>
+        <p><b>Scenario:</b> Audit when a flow updates an opportunity record.</p>
+        <ul>
+          <li><b>Object:</b> Opportunity | <b>Trigger:</b> Record is updated | <b>Optimize:</b> Fast Field Updates (Before-Save)</li>
+          <li><b>Assignment Element:</b> Set <code>$Record.Last_Modified_By_Flow_Date__c</code> = <code>$Flow.CurrentDate</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Practice 3: Parent Account Last Case Closure</h4>
+        <p><b>Scenario:</b> Keep parent Accounts informed when a related Case is closed.</p>
+        <ul>
+          <li><b>Object:</b> Case | <b>Trigger:</b> Record is updated | <b>Condition:</b> Status Equals Closed</li>
+          <li><b>Decision:</b> Is <code>{!$Record.AccountId}</code> IS NULL = FALSE?</li>
+          <li><b>Update Records:</b> Filter: Account where Id = <code>{!$Record.AccountId}</code>. Field Update: Last_Case_Closed_Date__c = <code>{!$Record.ClosedDate}</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Practice 4: Scheduled Path (Escalation)</h4>
+        <p><b>Scenario:</b> Schedule a background check 3 days after a Case is escalated.</p>
+        <ul>
+          <li><b>Run Immediately Path:</b> Update Element to Set <code>$Record.Reviewed__c = FALSE</code></li>
+          <li><b>Scheduled Path:</b> Offset: 3 Days After | Time Source: ClosedDate. Update Element to Set <code>$Record.Ready_For_Review__c = TRUE</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Practice 5: Asynchronous Path</h4>
+        <p><b>Scenario:</b> Recalculate related line-item totals in the background when an Opportunity stage changes.</p>
+        <ul>
+          <li><b>Path:</b> Run Asynchronously.</li>
+          <li><b>Logic:</b> Get related OpportunityLineItems -> Loop through them and sum Quantity -> Update parent Opportunity TotalQuantity__c.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>💡 Insight Questions</h3>
+    <ul>
+      <li><b>Before-Save vs. After-Save:</b> When would you choose Fast Field Updates over Actions and Related Records?</li>
+      <li><b>Asynchronous Paths:</b> What are the advantages of using an Asynchronous Path for heavy computations or callouts?</li>
+    </ul>
+
+    <h3>📝 MCQ Assessment</h3>
+    <div class="grid g2">
+      <div class="card">
+        <p><b>Q5. You need to automatically set the Rating field on a Lead to "Hot" whenever a Lead is created with an Industry of "Technology". Which configuration is most efficient?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Record-Triggered Flow optimized for Actions &amp; Related Records</div>
+          <div class="mcq-opt">B) Autolaunched Flow triggered by Apex</div>
+          <div class="mcq-opt">C) Record-Triggered Flow optimized for Fast Field Updates</div>
+          <div class="mcq-opt">D) Scheduled-Triggered Flow running every hour</div>
+        </div>
+      </div>
+      <div class="card">
+        <p><b>Q6. When using an Asynchronous Path in a Record-Triggered Flow, when does the logic execute?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Immediately before the database transaction commits.</div>
+          <div class="mcq-opt">B) In a separate thread after the original transaction completes.</div>
+          <div class="mcq-opt">C) Exactly 24 hours after the triggering event.</div>
+          <div class="mcq-opt">D) Only when a user clicks a button on the UI.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section class="section">
+    <div class="eyebrow"><span class="n">Section 4</span> Autolaunched Flows</div>
+    <h2>🚀 Autolaunched Flows (Subflows)</h2>
+    
+    <div class="grid g3">
+      <div class="card">
+        <h4>Practice 1: Update Account Rating</h4>
+        <p><b>Input Variable:</b> varAccountId (Text, Available for input)</p>
+        <p><b>Logic:</b> Get related Opportunity records -> Count them -> Decision node (Hot if >5, Warm if 2-5, Cold if &lt;2) -> Update Account.Rating.</p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 2: Apply Discount</h4>
+        <p><b>Input Variables:</b> varTotalAmount, varDiscountPercent</p>
+        <p><b>Output Variable:</b> varDiscountedAmount</p>
+        <p><b>Formula:</b> <code>{!varTotalAmount} - ({!varTotalAmount} * ({!varDiscountPercent} / 100))</code></p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 3: Auto-Create Task</h4>
+        <p><b>Input Variables:</b> varRecordId, varDueInDays</p>
+        <p><b>Output Variable:</b> varTaskId</p>
+        <p><b>Logic:</b> Create Task (Subject="Follow Up", WhatId=varRecordId, ActivityDate=Today+varDueInDays).</p>
+      </div>
+    </div>
+
+    <h3>💡 Insight Questions</h3>
+    <ul>
+      <li><b>Reusability:</b> Why is modular design (creating reusable subflows) better than writing repetitive logic in multiple record-triggered flows?</li>
+      <li><b>Variable Security:</b> What happens if an input variable is not marked as "Available for input"?</li>
+    </ul>
+
+    <h3>📝 MCQ Assessment</h3>
+    <div class="grid g2">
+      <div class="card">
+        <p><b>Q7. What setting must be enabled on a flow variable so that a parent Record-Triggered Flow can pass data into a child Subflow?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Available for output</div>
+          <div class="mcq-opt">B) Available for input</div>
+          <div class="mcq-opt">C) Allow multiple values (collection)</div>
+          <div class="mcq-opt">D) Global Variable</div>
+        </div>
+      </div>
+      <div class="card">
+        <p><b>Q8. Which type of flow CANNOT contain Screen elements and can be directly invoked by Apex code or REST API?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Screen Flow</div>
+          <div class="mcq-opt">B) Scheduled Flow</div>
+          <div class="mcq-opt">C) Autolaunched Flow</div>
+          <div class="mcq-opt">D) Custom Metadata Flow</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section class="section">
+    <div class="eyebrow"><span class="n">Section 5</span> Scheduled Flows</div>
+    <h2>⏰ Scheduled Flows</h2>
+    
+    <div class="grid g3">
+      <div class="card">
+        <h4>Practice 1: Stale Opportunity</h4>
+        <p><b>Schedule:</b> Weekly on Mondays.</p>
+        <p><b>Filter:</b> StageName = Negotiation AND LastModified &lt;= LAST_N_DAYS:14</p>
+        <p><b>Action:</b> Send Email Alert.</p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 2: Archive Leads</h4>
+        <p><b>Schedule:</b> Weekly on Sundays.</p>
+        <p><b>Filter:</b> Status = Working AND LastActivity &lt;= LAST_N_DAYS:90</p>
+        <p><b>Action:</b> Update Status = Closed - Converted.</p>
+      </div>
+
+      <div class="card">
+        <h4>Practice 3: Birthdays</h4>
+        <p><b>Schedule:</b> Daily at 8:00 AM.</p>
+        <p><b>Filter:</b> Is_Birthday_Today__c = TRUE</p>
+        <p><b>Action:</b> Send Email via Template.</p>
+      </div>
+    </div>
+
+    <h3>💡 Insight Questions</h3>
+    <ul>
+      <li><b>Governor Limits:</b> How does Salesforce execute Scheduled Flows across thousands of records without running into governor limits?</li>
+      <li><b>Testing Strategy:</b> What is the best way to test a Scheduled Flow before deploying it to production?</li>
+    </ul>
+
+    <h3>📝 MCQ Assessment</h3>
+    <div class="grid g2">
+      <div class="card">
+        <p><b>Q9. How does Salesforce determine which records a Scheduled Flow runs against?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) It runs against every single record in the entire org.</div>
+          <div class="mcq-opt">B) You specify an object and set record filter conditions in the Start element.</div>
+          <div class="mcq-opt">C) You must write a SOQL query inside a Get Records element.</div>
+          <div class="mcq-opt">D) It randomly picks 200 records at a time.</div>
+        </div>
+      </div>
+      <div class="card">
+        <p><b>Q10. What is a key restriction of Scheduled Flows compared to Record-Triggered Flows?</b></p>
+        <div class="mcq-opts">
+          <div class="mcq-opt">A) Scheduled Flows cannot use Decision elements.</div>
+          <div class="mcq-opt">B) Scheduled Flows cannot send emails.</div>
+          <div class="mcq-opt">C) Scheduled Flows cannot execute callouts.</div>
+          <div class="mcq-opt">D) Scheduled Flows cannot run more frequently than specified schedule options (e.g., Daily/Weekly).</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6 -->
+  <section class="section">
+    <div class="eyebrow"><span class="n">Section 6</span> Comprehensive</div>
+    <h2>🚩 Case Study: Incident Scoring &amp; Escalation Engine</h2>
+    
+    <div class="callout info">
+      <span class="ci">📊</span>
+      <p><b>Requirements Summary:</b> Case object (Type = Incident). Required Fields: Case Reason, Description, Status, Priority (Low, Medium, High), Region (US, EU, APAC). Action: If calculated Score > 85, automatically send an email alert to the system admin.</p>
+    </div>
+
+    <h4>Scoring Rules:</h4>
+    <ul>
+      <li>If Region = "US" AND Priority = "High" → <b>Score = 90</b></li>
+      <li>If Region = "EU" AND Priority = "High" → <b>Score = 80</b></li>
+      <li>Default / Other Combinations → <b>Score = 50</b></li>
+    </ul>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>Solution Option A: Formula Field (Recommended)</h4>
+        <p>Create a Formula Field <code>Score__c</code> (Number, 0 Decimals):</p>
+        <div class="code" data-code><div class="bar"><span class="lang">Formula</span></div><pre>IF(
+  AND(ISPICKVAL(Region__c, "US"), ISPICKVAL(Priority, "High")), 
+  90,
+  IF(
+    AND(ISPICKVAL(Region__c, "EU"), ISPICKVAL(Priority, "High")), 
+    80, 
+    50
+  )
+)</pre></div>
+        <p>Then create a Record-Triggered Flow: Entry Criteria: <code>Score__c > 85</code> → Send Email Action.</p>
+      </div>
+
+      <div class="card">
+        <h4>Solution Option B: Flow-Based Logic</h4>
+        <p>Create a Before-Save Record-Triggered Flow on Case:</p>
+        <div class="code" data-code><div class="bar"><span class="lang">Flow Logic</span></div><pre>
+       [ Start: Case Created/Updated ]
+                     │
+    ┌─────────────────────────────────┐
+    │   Decision: Check Score Logic   │
+    └─────────────────────────────────┘
+       │             │            │
+  (US+High)      (EU+High)   (All Others)
+       │             │            │
+ [Set Score=90] [Set Score=80] [Set Score=50]
+       │             │            │
+       └─────────────┼────────────┘
+                     │
+    ┌────────────────────────────────────┐
+    │ Decision: Is Score Greater Than 85?│
+    └────────────────────────────────────┘
+             │                 │
+           (Yes)              (No)
+             │                 │
+     [Send Email Alert]      [End]
+        </pre></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
