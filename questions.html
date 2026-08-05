@@ -151,11 +151,10 @@
         <p><b>Scenario:</b> Allow sales managers to update stages across multiple active opportunities.</p>
         <p><b>Steps &amp; Elements:</b></p>
         <ol>
-          <li><b>Get Records:</b> Object: Opportunity. Filter: StageName != Closed Won AND StageName != Closed Lost.</li>
-          <li><b>Screen Element:</b> Picklist (Select New Stage) and Data Table (Active Opportunities) with multi-row selection enabled.</li>
-          <li><b>Loop Element:</b> Iterate over <code>{!Active_Opportunities.selectedRows}</code>.</li>
-          <li><b>Assignment Element:</b> Set StageName = <code>{!Select_New_Stage}</code> and add to collection variable.</li>
-          <li><b>Update Records:</b> Update records from the collection variable.</li>
+          <li><b>Get the Opportunity Records</b></li>
+          <li><b>Display the opportunities for the end user to choose.</b></li>
+          <li><b>Once the user has chosen, provide the stage they want to chnage to</b></li>
+          <li><b>Update the records from the value provided.</li>
         </ol>
       </div>
     </div>
