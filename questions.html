@@ -209,44 +209,79 @@
         <ul>
           <li><b>Object:</b> Opportunity | <b>Trigger:</b> Record is created | <b>Condition:</b> Industry__c Equals HealthCare</li>
           <li><b>Get Records:</b> Find Account where Name = Health Trust.</li>
-          <li><b>Update Records:</b> Set <code>$Record.AccountId</code> = Get_Health_Trust_Account.Id.</li>
+          <li>Update Opportunity Records with the Account</li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Practice 2: Last Modified Tracking</h4>
-        <p><b>Scenario:</b> Audit when a flow updates an opportunity record.</p>
+        <h4>Practice 2: Lead Source Priority & Clean-up</h4>
+        <p><b>Scenario:</b> Your sales team wants to ensure that any new Lead coming into Salesforce with a LeadSource of "Web" is automatically prioritized so reps can follow up immediately.</p>
         <ul>
-          <li><b>Object:</b> Opportunity | <b>Trigger:</b> Record is updated | <b>Optimize:</b> Fast Field Updates (Before-Save)</li>
-          <li><b>Assignment Element:</b> Set <code>$Record.Last_Modified_By_Flow_Date__c</code> = <code>$Flow.CurrentDate</code></li>
+          <li><b>Object:</b> Lead | <b>Trigger:</b> Record is created or updated</li>
+          <li><b>Flow Action:</b>
+            <ol>
+                <li>Set the Lead Rating to "Hot".</li>
+                <li>Set the Description field to "Priority Web Lead - Requires immediate follow-up within 2 hours."</li>
+            </ol>
+          </li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Practice 3: Parent Account Last Case Closure</h4>
-        <p><b>Scenario:</b> Keep parent Accounts informed when a related Case is closed.</p>
+        <h4>Practice 3: Automated Welcome Task for High-Value Opportunities</h4>
+        <p><b>Scenario:</b> When an Opportunity is officially closed and won, your customer success team needs to reach out immediately to start the onboarding process.</p>
         <ul>
-          <li><b>Object:</b> Case | <b>Trigger:</b> Record is updated | <b>Condition:</b> Status Equals Closed</li>
-          <li><b>Decision:</b> Is <code>{!$Record.AccountId}</code> IS NULL = FALSE?</li>
-          <li><b>Update Records:</b> Filter: Account where Id = <code>{!$Record.AccountId}</code>. Field Update: Last_Case_Closed_Date__c = <code>{!$Record.ClosedDate}</code></li>
+          <li><b>Object:</b> Opportunity | <b>Trigger:</b> Record is updated </li>
+          <li><b>Flow Actions:</b>
+            <ol>
+                <li>Create a new Task record assigned to the Opportunity Owner.</li>
+                <li>Related To the Opportunity</li>
+                <li>ActivityDate (Due Date): Set to 3 days from today.</li>
+                <li>Status: Not Started</li>
+                <li>Priority: High</li>
+            </ol>
+          </li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Practice 4: Scheduled Path (Escalation)</h4>
-        <p><b>Scenario:</b> Schedule a background check 3 days after a Case is escalated.</p>
+        <h4>Practice 4: Lead Follow-Up Reminder</h4>
+        <p><b>Scenario:</b> When a new Lead is created, the sales team wants a safety net: if the Lead sits untouched for 3 days, the system should automatically flag it so it doesn't get forgotten.</p>
         <ul>
-          <li><b>Run Immediately Path:</b> Update Element to Set <code>$Record.Reviewed__c = FALSE</code></li>
-          <li><b>Scheduled Path:</b> Offset: 3 Days After | Time Source: ClosedDate. Update Element to Set <code>$Record.Ready_For_Review__c = TRUE</code></li>
+          <li><b>Object:</b> Lead | <b>Trigger:</b> Record is ?</li>
+          <li><b>Scheduled Path:</b> Offset: 3 Days After | Time Source: CreatedDate.</li>
+          <li><b>Flow Actions:</b>
+            <ol>
+                <li>Check if the Lead Status is still "Open - Not Contacted".</li>
+                <li>If True (Update Records): </li>
+                <ol>
+                    <li>Set the Lead Rating to "Cold".</li>
+                    <li>Update the Description to "Automated Alert: No action taken within 3 days of creation."</li>
+                </ol>
+            </ol>
+          </li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Practice 5: Asynchronous Path</h4>
-        <p><b>Scenario:</b> Recalculate related line-item totals in the background when an Opportunity stage changes.</p>
+        <h4>Practice 5: VIP Account Alert & User Assignment</h4>
+        <p><b>Scenario:</b> When an Account is updated to have annual revenue greater than $1,000,000, the company considers them a VIP. As part of VIP onboarding, Salesforce needs to flag the Account and automatically reassign the primary sales rep's Title or send an asynchronous setup update without freezing the user's screen.</p>
         <ul>
-          <li><b>Path:</b> Run Asynchronously.</li>
-          <li><b>Logic:</b> Get related OpportunityLineItems -> Loop through them and sum Quantity -> Update parent Opportunity TotalQuantity__c.</li>
+          <li><b>Object:</b> ? | <b>Trigger:</b> Record is ? | <b>Entry Criteria:</b> ?</li>
+          <li><b>Path:</b> Run Immediate and Asynchronous Paths.</li>
+          <li><b>Flow Actions:</b>
+            <ol>
+                <li>Run Immediately Path (Synchronous):</li>
+                <ol>
+                    <li>Update Element: Update the triggering Account's Type field to "Technology Partner" (or another standard picklist value like "Customer - Direct").</li>
+                </ol>
+                <li>Run Asynchronously Path (Background):</li>
+                <ol>
+                    <li>Update the User record who owns the Account</li>
+                    <li> <p>User Field Values:</p> Title: VIP Account Manager</li>
+                </ol>
+            </ol>
+          </li>
         </ul>
       </div>
     </div>
