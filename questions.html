@@ -141,7 +141,16 @@
         <p><b>Scenario:</b> Enable sales reps to quickly log new contacts while in the field.</p>
         <p><b>Steps &amp; Elements:</b></p>
         <ul>
-          <li><b>Screen Element (Collect Contact Details):</b> Text Input (First Name), Text Input (Last Name - Required), Email Input, Lookup Input (Account Name).</li>
+          <li><b>Screen Element (Collect Contact Details):</b>
+            <ol>
+            <li>Text Input (First Name)</li>
+            <li>Text Input (Last Name - Required)</li>
+            <li>Email Input</li>
+            <li>Lookup Input (Account Name)</li>
+            <li>Add Help Text for Family Name</li>
+            <li>Add Validation (Length of LastName should be greater than 3 character).</li>
+            </ol>
+        </li>
           <li><b>Create Records Element:</b> Object: Contact. Map screen inputs directly to fields.</li>
         </ul>
       </div>
